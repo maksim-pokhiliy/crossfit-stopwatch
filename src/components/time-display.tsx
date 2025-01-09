@@ -1,7 +1,7 @@
-import { Box, Typography, useTheme } from '@mui/material';
-import { useMemo } from 'react';
+import { Box, Typography, useTheme } from "@mui/material";
+import { useMemo } from "react";
 
-import { useTimerContext } from '../hooks/use-timer-context';
+import { useTimerContext } from "../hooks/use-timer-context";
 
 const formatTime = (ms: number): string => {
   const totalSeconds = Math.floor(ms / 1000);
@@ -10,9 +10,9 @@ const formatTime = (ms: number): string => {
   const seconds = totalSeconds % 60;
   const milliseconds = Math.floor((ms % 1000) / 10);
 
-  const pad = (num: number, size: number = 2) => num.toString().padStart(size, '0');
+  const pad = (num: number, size: number = 2) => num.toString().padStart(size, "0");
 
-  return `${hours ? `${pad(hours)}:` : ''}${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
+  return `${hours ? `${pad(hours)}:` : ""}${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
 };
 
 export const TimeDisplay = () => {
@@ -27,7 +27,7 @@ export const TimeDisplay = () => {
       return theme.palette.warning.main;
     }
 
-    if (state.currentMode === 'emom' && state.isRunning) {
+    if (state.currentMode === "emom" && state.isRunning) {
       const timeInMinute = state.elapsedTime % 60000;
 
       if (timeInMinute >= 55000) {
@@ -42,11 +42,11 @@ export const TimeDisplay = () => {
     return theme.palette.text.primary;
   }, [state.countdownActive, state.currentMode, state.isRunning, state.elapsedTime, theme.palette]);
 
-  const containerStyles = useMemo(() => ({ textAlign: 'center', width: '100%' }), []);
+  const containerStyles = useMemo(() => ({ textAlign: "center", width: "100%" }), []);
 
   const timeStyles = useMemo(
     () => ({
-      fontWeight: 'bold',
+      fontWeight: "bold",
       color: textColor,
     }),
     [textColor],
@@ -54,16 +54,18 @@ export const TimeDisplay = () => {
 
   return (
     <Box sx={containerStyles}>
-      {state.currentMode === 'emom' && state.isRunning && (
-        <Typography gutterBottom color="text.secondary" variant="h6">
+      {state.currentMode === "emom" && state.isRunning && (
+        <Typography gutterBottom color='text.secondary' variant='h6'>
           Round {state.currentRound}
         </Typography>
       )}
-      <Typography component="div" sx={timeStyles} variant="h2">
+
+      <Typography component='div' sx={timeStyles} variant='h2'>
         {formattedTime}
       </Typography>
+
       {state.countdownActive && (
-        <Typography color="text.secondary" variant="subtitle1">
+        <Typography color='text.secondary' variant='subtitle1'>
           Get ready!
         </Typography>
       )}
