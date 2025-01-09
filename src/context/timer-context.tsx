@@ -1,13 +1,13 @@
-import { useReducer, ReactNode } from 'react';
+import { ReactNode, useReducer } from "react";
 
-import { STORAGE_KEYS } from '../constants/timer';
-import { TimerState, TimerAction } from '../types/timer';
+import { STORAGE_KEYS } from "../constants/timer";
+import { TimerAction, TimerState } from "../types/timer";
 
-import { TimerContext, getInitialState } from './create-timer-context';
+import { TimerContext, getInitialState } from "./create-timer-context";
 
 const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
   switch (action.type) {
-    case 'SET_MODE':
+    case "SET_MODE": {
       localStorage.setItem(STORAGE_KEYS.LAST_MODE, action.payload);
 
       return {
@@ -21,8 +21,9 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         countdownValue: state.countdownDuration,
         targetTime: 0,
       };
+    }
 
-    case 'START_TIMER':
+    case "START_TIMER": {
       return {
         ...state,
         countdownActive: true,
@@ -30,8 +31,9 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         targetTime: action.payload.targetTime ?? state.targetTime,
         startTime: Date.now(),
       };
+    }
 
-    case 'STOP_TIMER':
+    case "STOP_TIMER": {
       return {
         ...state,
         isRunning: false,
@@ -39,8 +41,9 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         countdownActive: false,
         countdownValue: state.countdownDuration,
       };
+    }
 
-    case 'RESET_TIMER':
+    case "RESET_TIMER": {
       return {
         ...state,
         startTime: null,
@@ -51,21 +54,24 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         countdownValue: state.countdownDuration,
         targetTime: 0,
       };
+    }
 
-    case 'UPDATE_TIMER':
+    case "UPDATE_TIMER": {
       return {
         ...state,
         elapsedTime: action.payload.elapsedTime,
         currentRound: action.payload.currentRound ?? state.currentRound,
       };
+    }
 
-    case 'UPDATE_COUNTDOWN':
+    case "UPDATE_COUNTDOWN": {
       return {
         ...state,
         countdownValue: action.payload,
       };
+    }
 
-    case 'FINISH_COUNTDOWN':
+    case "FINISH_COUNTDOWN": {
       return {
         ...state,
         countdownActive: false,
@@ -73,22 +79,25 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         isRunning: true,
         startTime: Date.now(),
       };
+    }
 
-    case 'SET_THEME':
+    case "SET_THEME": {
       localStorage.setItem(STORAGE_KEYS.THEME, action.payload);
 
       return {
         ...state,
         theme: action.payload,
       };
+    }
 
-    case 'SET_TARGET_TIME':
+    case "SET_TARGET_TIME": {
       return {
         ...state,
         targetTime: action.payload,
       };
+    }
 
-    case 'SET_COUNTDOWN_DURATION':
+    case "SET_COUNTDOWN_DURATION": {
       localStorage.setItem(STORAGE_KEYS.COUNTDOWN_DURATION, action.payload.toString());
 
       return {
@@ -96,9 +105,11 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
         countdownDuration: action.payload,
         countdownValue: action.payload,
       };
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 };
 

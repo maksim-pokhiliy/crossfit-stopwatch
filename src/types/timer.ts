@@ -1,7 +1,7 @@
-import { Dispatch } from 'react';
+import { Dispatch } from "react";
 
-export type TimerMode = 'forTime' | 'amrap' | 'emom';
-export type Theme = 'light' | 'dark';
+export type TimerMode = "forTime" | "amrap" | "emom";
+export type Theme = "light" | "dark";
 
 export interface TimerState {
   startTime: number | null;
@@ -17,19 +17,19 @@ export interface TimerState {
 }
 
 export type TimerAction =
-  | { type: 'SET_MODE'; payload: TimerMode }
-  | { type: 'START_TIMER'; payload: { targetTime?: number } }
-  | { type: 'STOP_TIMER' }
-  | { type: 'RESET_TIMER' }
+  | { type: "SET_MODE"; payload: TimerMode }
+  | { type: "START_TIMER"; payload: { targetTime?: number } }
+  | { type: "STOP_TIMER" }
+  | { type: "RESET_TIMER" }
   | {
-      type: 'UPDATE_TIMER';
+      type: "UPDATE_TIMER";
       payload: { elapsedTime: number; currentRound?: number };
     }
-  | { type: 'UPDATE_COUNTDOWN'; payload: number }
-  | { type: 'FINISH_COUNTDOWN' }
-  | { type: 'SET_THEME'; payload: Theme }
-  | { type: 'SET_TARGET_TIME'; payload: number }
-  | { type: 'SET_COUNTDOWN_DURATION'; payload: number };
+  | { type: "UPDATE_COUNTDOWN"; payload: number }
+  | { type: "FINISH_COUNTDOWN" }
+  | { type: "SET_THEME"; payload: Theme }
+  | { type: "SET_TARGET_TIME"; payload: number }
+  | { type: "SET_COUNTDOWN_DURATION"; payload: number };
 
 export interface TimerContextType {
   state: TimerState;

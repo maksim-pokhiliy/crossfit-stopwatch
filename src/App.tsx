@@ -1,10 +1,10 @@
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { useMemo } from 'react';
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { useMemo } from "react";
 
-import { Timer } from './components/timer';
-import { TimerProvider } from './context/timer-context';
-import { useTimerContext } from './hooks/use-timer-context';
-import { createAppTheme } from './theme/theme';
+import { Timer } from "./components/timer";
+import { TimerProvider } from "./context/timer-context";
+import { useTimerContext } from "./hooks/use-timer-context";
+import { createAppTheme } from "./theme/theme";
 
 const TimerApp = () => {
   const { state } = useTimerContext();

@@ -1,18 +1,18 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { TIMER_CONSTANTS, STORAGE_KEYS } from '../constants/timer';
-import { TimerContextType, TimerState, TimerMode, Theme } from '../types/timer';
+import { STORAGE_KEYS, TIMER_CONSTANTS } from "../constants/timer";
+import { Theme, TimerContextType, TimerMode, TimerState } from "../types/timer";
 
 const getInitialMode = (): TimerMode => {
   const savedMode = localStorage.getItem(STORAGE_KEYS.LAST_MODE) as TimerMode;
 
-  return savedMode || 'forTime';
+  return savedMode || "forTime";
 };
 
 const getInitialTheme = (): Theme => {
   const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as Theme;
 
-  return savedTheme || 'dark';
+  return savedTheme || "dark";
 };
 
 const getInitialCountdownDuration = (): number => {
@@ -43,4 +43,4 @@ export const TimerContext = createContext<TimerContextType>({
   dispatch: () => null,
 });
 
-TimerContext.displayName = 'TimerContext';
+TimerContext.displayName = "TimerContext";

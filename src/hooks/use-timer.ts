@@ -1,15 +1,15 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from "react";
 
-import { TimerMode } from '../types/timer';
+import { TimerMode } from "../types/timer";
 
-import { useTimerContext } from './use-timer-context';
+import { useTimerContext } from "./use-timer-context";
 
 export const useTimer = () => {
   const { state, dispatch } = useTimerContext();
 
   const setMode = useCallback(
     (mode: TimerMode) => {
-      dispatch({ type: 'SET_MODE', payload: mode });
+      dispatch({ type: "SET_MODE", payload: mode });
     },
     [dispatch],
   );
@@ -20,17 +20,17 @@ export const useTimer = () => {
         return;
       }
 
-      dispatch({ type: 'START_TIMER', payload: { targetTime } });
+      dispatch({ type: "START_TIMER", payload: { targetTime } });
     },
     [dispatch, state.isRunning, state.countdownActive],
   );
 
   const stopTimer = useCallback(() => {
-    dispatch({ type: 'STOP_TIMER' });
+    dispatch({ type: "STOP_TIMER" });
   }, [dispatch]);
 
   const resetTimer = useCallback(() => {
-    dispatch({ type: 'RESET_TIMER' });
+    dispatch({ type: "RESET_TIMER" });
   }, [dispatch]);
 
   const updateTimer = useCallback(() => {
@@ -41,47 +41,47 @@ export const useTimer = () => {
 
       if (remaining > 0) {
         dispatch({
-          type: 'UPDATE_COUNTDOWN',
+          type: "UPDATE_COUNTDOWN",
           payload: remaining,
         });
       } else {
-        dispatch({ type: 'FINISH_COUNTDOWN' });
+        dispatch({ type: "FINISH_COUNTDOWN" });
       }
     } else if (state.isRunning && state.startTime) {
       const now = Date.now();
       const newElapsedTime = now - state.startTime;
 
-      if (state.currentMode === 'emom') {
+      if (state.currentMode === "emom") {
         const currentMinute = Math.floor(newElapsedTime / 60000);
         const currentRound = currentMinute + 1;
 
         if (currentRound !== state.currentRound) {
           dispatch({
-            type: 'UPDATE_TIMER',
+            type: "UPDATE_TIMER",
             payload: { elapsedTime: newElapsedTime, currentRound },
           });
         } else {
           dispatch({
-            type: 'UPDATE_TIMER',
+            type: "UPDATE_TIMER",
             payload: { elapsedTime: newElapsedTime },
           });
         }
 
         if (state.targetTime > 0 && newElapsedTime >= state.targetTime) {
-          dispatch({ type: 'STOP_TIMER' });
+          dispatch({ type: "STOP_TIMER" });
         }
       } else {
         dispatch({
-          type: 'UPDATE_TIMER',
+          type: "UPDATE_TIMER",
           payload: { elapsedTime: newElapsedTime },
         });
 
         if (
-          state.currentMode === 'amrap' &&
+          state.currentMode === "amrap" &&
           state.targetTime > 0 &&
           newElapsedTime >= state.targetTime
         ) {
-          dispatch({ type: 'STOP_TIMER' });
+          dispatch({ type: "STOP_TIMER" });
         }
       }
     }

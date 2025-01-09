@@ -9,14 +9,14 @@ export const TIMER_CONSTANTS = {
 } as const;
 
 export const STORAGE_KEYS = {
-  LAST_MODE: 'lastMode',
-  THEME: 'theme',
-  COUNTDOWN_DURATION: 'countdownDuration',
+  LAST_MODE: "lastMode",
+  THEME: "theme",
+  COUNTDOWN_DURATION: "countdownDuration",
 } as const;
 
 export const SOUNDS = {
-  COUNTDOWN: 'countdown',
-  GO: 'go',
-  ROUND: 'round',
-  FINISH: 'finish',
+  COUNTDOWN: "countdown",
+  GO: "go",
+  ROUND: "round",
+  FINISH: "finish",
 } as const;
