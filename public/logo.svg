@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="128" fill="#1976d2" />
-  <circle cx="256" cy="256" r="180" stroke="white" stroke-width="24" />
-  <path d="M256 120 L256 256 L352 304" stroke="white" stroke-width="24" stroke-linecap="round"
-    stroke-linejoin="round" />
-</svg> 
+  <!-- iOS mask -->
+  <path
+    d="M0 99.3362C0 39.8481 39.8481 0 99.3362 0H412.664C472.152 0 512 39.8481 512 99.3362V412.664C512 472.152 472.152 512 412.664 512H99.3362C39.8481 512 0 472.152 0 412.664V99.3362Z"
+    fill="#1976d2" />
+
+  <!-- Timer Circle -->
+  <circle cx="256" cy="256" r="160" stroke="white" stroke-width="24" fill="none" />
+
+  <!-- Timer Hands -->
+  <line x1="256" y1="256" x2="256" y2="156" stroke="white" stroke-width="20" stroke-linecap="round" />
+  <line x1="256" y1="256" x2="356" y2="256" stroke="white" stroke-width="20" stroke-linecap="round" />
+</svg>
