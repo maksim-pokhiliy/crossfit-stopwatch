@@ -64,7 +64,7 @@ export const TimeDisplay = () => {
         {formattedTime}
       </Typography>
 
-      {state.countdownActive && (
+      {state.countdownActive && state.countdownDuration > 0 && (
         <Typography color='text.secondary' variant='subtitle1'>
           Get ready!
         </Typography>
