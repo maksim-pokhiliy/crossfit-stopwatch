@@ -1,0 +1,70 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build project
+    cmds:
+      - pnpm build
+
+  start:
+    desc: Start app in dev mode
+    cmds:
+      - pnpm dev
+
+  clean-start:
+    desc: Clean project dependencies & start
+    cmds:
+      - task: clean
+      - pnpm install --frozen-lockfile
+      - pnpm dev
+
+  preview:
+    desc: Preview production build
+    cmds:
+      - pnpm build
+      - pnpm preview
+
+  vercel-deploy:
+    desc: Deploy app to the Vercel
+    prompt: Are you sure you want to deploy project to the Vercel environment?
+    cmds:
+      - ./scripts/check_branch.sh
+      - pnpm lint
+      - pnpm format
+      - pnpm json-lint
+      - pnpm tscheck
+      - vercel --prod
+      - git status
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - pnpm install
+
+  ci:
+    desc: Install dependencies for CI
+    cmds:
+      - task: clean
+      - pnpm install --frozen-lockfile
+
+  lint:
+    desc: Lint and format code
+    cmds:
+      - pnpm lint
+      - pnpm format
+      - pnpm json-lint
+      - pnpm tscheck
+
+  lint-check:
+    desc: Check code quality without formatting
+    cmds:
+      - pnpm lint-check
+      - pnpm json-check
+      - pnpm tscheck
+
+  clean:
+    desc: Clean project artifacts
+    cmds:
+      - rm -rf dist
+      - rm -rf node_modules
+      - pnpm store prune
