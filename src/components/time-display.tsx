@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 import { soundService } from "../services/sound.service";
@@ -16,7 +16,7 @@ const formatTime = (ms: number): string => {
   return `${hours ? `${pad(hours)}:` : ""}${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
 };
 
-export const TimeDisplay = () => {
+export const TimeDisplay = memo(() => {
   const theme = useTheme();
   const { state } = useTimerContext();
   const time = state.countdownActive ? state.countdownValue : state.elapsedTime;
@@ -99,4 +99,6 @@ export const TimeDisplay = () => {
       )}
     </Box>
   );
-};
+});
+
+TimeDisplay.displayName = "TimeDisplay";

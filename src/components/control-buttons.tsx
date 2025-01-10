@@ -2,12 +2,12 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import Refresh from "@mui/icons-material/Refresh";
 import Stop from "@mui/icons-material/Stop";
 import { Button, ButtonGroup } from "@mui/material";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 
 import { useTimer } from "../hooks/use-timer";
 import { soundService } from "../services/sound.service";
 
-export const ControlButtons = () => {
+export const ControlButtons = memo(() => {
   const { state, startTimer, stopTimer, resetTimer } = useTimer();
 
   const handleStart = useCallback(async () => {
@@ -74,4 +74,6 @@ export const ControlButtons = () => {
       </Button>
     </ButtonGroup>
   );
-};
+});
+
+ControlButtons.displayName = "ControlButtons";
