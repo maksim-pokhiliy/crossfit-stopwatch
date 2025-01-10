@@ -54,17 +54,24 @@ export const TimeDisplay = () => {
   );
 
   useEffect(() => {
-    if (state.countdownActive) {
-      const seconds = Math.floor(state.countdownValue / 1000);
+    const playCountdown = async () => {
+      if (state.countdownActive) {
+        const seconds = Math.floor(state.countdownValue / 1000);
 
-      soundService.playCountdownSound(seconds);
-    } else if (!state.countdownActive && state.isRunning && state.elapsedTime < 100) {
-      soundService.playStartSound();
-    } else if (state.currentMode === "emom" && state.isRunning) {
-      const timeInMinute = state.elapsedTime % 60000;
+        await soundService.initialize();
+        await soundService.playCountdownSound(seconds);
+      } else if (!state.countdownActive && state.isRunning && state.elapsedTime < 100) {
+        await soundService.initialize();
+        await soundService.playStartSound();
+      } else if (state.currentMode === "emom" && state.isRunning) {
+        const timeInMinute = state.elapsedTime % 60000;
 
-      soundService.playEmomSound(timeInMinute);
-    }
+        await soundService.initialize();
+        await soundService.playEmomSound(timeInMinute);
+      }
+    };
+
+    playCountdown();
   }, [
     state.countdownActive,
     state.countdownValue,
