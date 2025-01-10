@@ -62,6 +62,16 @@ tasks:
       - pnpm json-check
       - pnpm tscheck
 
+  test:
+    desc: Run tests
+    cmds:
+      - pnpm test
+
+  test-check:
+    desc: Run tests in CI mode with coverage
+    cmds:
+      - pnpm test:ci
+
   clean:
     desc: Clean project artifacts
     cmds:
