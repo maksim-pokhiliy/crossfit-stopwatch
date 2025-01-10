@@ -9,6 +9,8 @@ const ASSETS_TO_CACHE = [
   "/logo512.png",
   "/static/js/main.js",
   "/static/css/main.css",
+  "/sounds/short-beep.mp3",
+  "/sounds/long-beep.mp3",
 ];
 
 // Install service worker and cache assets

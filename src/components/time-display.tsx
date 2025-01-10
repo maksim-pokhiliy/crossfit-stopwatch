@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 
@@ -19,6 +19,43 @@ export const TimeDisplay = () => {
   const theme = useTheme();
   const { state } = useTimerContext();
   const time = state.countdownActive ? state.countdownValue : state.elapsedTime;
+
+  const shortBeepRef = useRef<HTMLAudioElement | null>(null);
+  const longBeepRef = useRef<HTMLAudioElement | null>(null);
+  const lastPlayedTimeRef = useRef<number>(0);
+  const lastPlayedSecondRef = useRef<number>(-1);
+
+  useEffect(() => {
+    const baseUrl = window.location.origin;
+
+    shortBeepRef.current = new Audio(`${baseUrl}/sounds/short-beep.mp3`);
+    longBeepRef.current = new Audio(`${baseUrl}/sounds/long-beep.mp3`);
+  }, []);
+
+  const playSound = async (sound: HTMLAudioElement | null, currentSecond: number) => {
+    if (!sound) {
+      return;
+    }
+
+    const now = Date.now();
+
+    if (lastPlayedSecondRef.current === currentSecond) {
+      return;
+    }
+
+    if (now - lastPlayedTimeRef.current < 1000) {
+      return;
+    }
+
+    try {
+      sound.currentTime = 0;
+      await sound.play();
+      lastPlayedTimeRef.current = now;
+      lastPlayedSecondRef.current = currentSecond;
+    } catch (error) {
+      console.error("Error playing sound:", error);
+    }
+  };
 
   const formattedTime = useMemo(() => formatTime(time), [time]);
 
@@ -51,6 +88,39 @@ export const TimeDisplay = () => {
     }),
     [textColor],
   );
+
+  useEffect(() => {
+    if (state.countdownActive) {
+      if (state.countdownValue <= 3000) {
+        const seconds = Math.floor(state.countdownValue / 1000);
+
+        if (seconds >= 0 && seconds <= 3) {
+          playSound(shortBeepRef.current, -seconds);
+        }
+      }
+    } else if (!state.countdownActive && state.isRunning && state.elapsedTime < 1000) {
+      playSound(longBeepRef.current, 1000);
+    }
+
+    if (state.currentMode === "emom" && state.isRunning) {
+      const timeInMinute = state.elapsedTime % 60000;
+      const seconds = Math.floor(timeInMinute / 1000);
+
+      if (timeInMinute >= 57000 && timeInMinute <= 59000) {
+        if (seconds === 57 || seconds === 58 || seconds === 59) {
+          playSound(shortBeepRef.current, seconds);
+        }
+      } else if (timeInMinute < 1000) {
+        playSound(longBeepRef.current, 0);
+      }
+    }
+  }, [
+    state.countdownActive,
+    state.countdownValue,
+    state.currentMode,
+    state.isRunning,
+    state.elapsedTime,
+  ]);
 
   return (
     <Box sx={containerStyles}>
