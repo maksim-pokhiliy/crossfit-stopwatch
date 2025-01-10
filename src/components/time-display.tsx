@@ -1,5 +1,5 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { memo, useEffect, useMemo } from "react";
+import { Box, Theme, Typography, useTheme } from "@mui/material";
+import { FC, memo, useEffect, useMemo } from "react";
 
 import { TIME, TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
@@ -21,8 +21,8 @@ const formatTime = (ms: number): string => {
   return `${hours ? `${pad(hours)}:` : ""}${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
 };
 
-export const TimeDisplay = memo(() => {
-  const theme = useTheme();
+export const TimeDisplay: FC = memo(() => {
+  const theme = useTheme<Theme>();
   const { state } = useTimerContext();
   const time = state.countdownActive ? state.countdownValue : state.elapsedTime;
 

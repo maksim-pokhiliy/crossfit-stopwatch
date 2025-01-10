@@ -1,89 +1,54 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { STORAGE_KEYS } from "../constants/timer";
 import { BaseTimer, TimerState } from "../models/base-timer";
 import { TimerFactory } from "../models/timer-factory";
-import { timerReducer } from "../models/timer-reducer";
 import { TimerMode } from "../types/timer";
-import { TimerAction } from "../types/timer-actions";
 
 import { TimerContext } from "./timer-context";
 
-const getInitialMode = (): TimerMode => {
-  const savedMode = localStorage.getItem(STORAGE_KEYS.LAST_MODE) as TimerMode;
+export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [currentTimer, setCurrentTimer] = useState<BaseTimer>(() =>
+    TimerFactory.createTimer("forTime"),
+  );
 
-  return savedMode || "forTime";
-};
+  const [state, setState] = useState<TimerState>(() => currentTimer.getState());
 
-export const TimerProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<TimerMode>(getInitialMode());
-  const timerRef = useRef<BaseTimer>(TimerFactory.createTimer(mode));
-  const [state, setState] = useState<TimerState>(() => timerRef.current.getState());
   const animationFrameRef = useRef<number>(0);
-  const lastUpdateTimeRef = useRef<number>(0);
 
-  const dispatch = useCallback((action: TimerAction) => {
-    timerReducer(timerRef.current, action);
-    setState(timerRef.current.getState());
-  }, []);
+  const setMode = useCallback((mode: TimerMode) => {
+    const newTimer = TimerFactory.createTimer(mode);
 
-  const animate = useCallback((timestamp: number) => {
-    if (lastUpdateTimeRef.current === 0) {
-      lastUpdateTimeRef.current = timestamp;
-    }
-
-    const elapsed = timestamp - lastUpdateTimeRef.current;
-
-    if (elapsed >= 10) {
-      timerRef.current.update();
-      setState(timerRef.current.getState());
-      lastUpdateTimeRef.current = timestamp;
-    }
-
-    if (timerRef.current.getState().isRunning || timerRef.current.getState().countdownActive) {
-      animationFrameRef.current = requestAnimationFrame(animate);
-    }
-  }, []);
-
-  const handleSetMode = useCallback((newMode: TimerMode) => {
-    localStorage.setItem(STORAGE_KEYS.LAST_MODE, newMode);
-    setMode(newMode);
-    timerRef.current = TimerFactory.createTimer(newMode);
-    setState(timerRef.current.getState());
+    setCurrentTimer(newTimer);
+    setState(newTimer.getState());
   }, []);
 
   const startTimer = useCallback(
     (targetTime?: number) => {
-      dispatch({ type: "START_TIMER", targetTime });
-      lastUpdateTimeRef.current = 0;
-      animationFrameRef.current = requestAnimationFrame(animate);
+      currentTimer.start(targetTime);
+      setState(currentTimer.getState());
     },
-    [animate, dispatch],
+    [currentTimer],
   );
 
   const stopTimer = useCallback(() => {
-    dispatch({ type: "STOP_TIMER" });
-
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-
-    lastUpdateTimeRef.current = 0;
-  }, [dispatch]);
+    currentTimer.stop();
+    setState(currentTimer.getState());
+  }, [currentTimer]);
 
   const resetTimer = useCallback(() => {
-    dispatch({ type: "RESET_TIMER" });
+    currentTimer.reset();
+    setState(currentTimer.getState());
+  }, [currentTimer]);
 
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
+  const animate = useCallback(() => {
+    currentTimer.update();
+    setState(currentTimer.getState());
 
-    lastUpdateTimeRef.current = 0;
-  }, [dispatch]);
+    animationFrameRef.current = requestAnimationFrame(animate);
+  }, [currentTimer]);
 
   useEffect(() => {
     if (state.isRunning || state.countdownActive) {
-      lastUpdateTimeRef.current = 0;
       animationFrameRef.current = requestAnimationFrame(animate);
     }
 
@@ -94,27 +59,20 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [state.isRunning, state.countdownActive, animate]);
 
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEYS.COUNTDOWN_DURATION && e.newValue) {
-        setState(timerRef.current.getState());
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  const contextValue = {
-    state,
-    currentTimer: timerRef.current,
-    setMode: handleSetMode,
-    startTimer,
-    stopTimer,
-    resetTimer,
-    setState,
-  };
+  const contextValue = useMemo(
+    () => ({
+      state,
+      currentTimer,
+      setMode,
+      startTimer,
+      stopTimer,
+      resetTimer,
+      setState,
+    }),
+    [state, currentTimer, setMode, startTimer, stopTimer, resetTimer],
+  );
 
   return <TimerContext.Provider value={contextValue}>{children}</TimerContext.Provider>;
 };
+
+TimerProvider.displayName = "TimerProvider";

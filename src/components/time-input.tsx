@@ -1,30 +1,19 @@
-import { Box, Chip, Stack, TextField } from "@mui/material";
-import { memo, useCallback, useEffect, useState } from "react";
+import { Box, Chip, Stack, TextField, Theme } from "@mui/material";
+import { ChangeEvent, FC, memo, useCallback } from "react";
 
-import { TIME, TIMER_CONSTANTS } from "../constants/timer";
+import { TIME } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
-export const TimeInput = memo(() => {
+export const TimeInput: FC = memo(() => {
   const { state, currentTimer, setState } = useTimerContext();
-  const [minutesInput, setMinutesInput] = useState<string>("");
-
-  useEffect(() => {
-    if (!state.isRunning && !state.countdownActive) {
-      setMinutesInput("");
-    }
-  }, [state.isRunning, state.countdownActive, state.currentMode]);
 
   const handleChange = useCallback(
-    (value: string) => {
-      const numValue = parseInt(value);
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      const minutes = parseInt(value, 10);
 
-      if (
-        value === "" ||
-        (numValue >= TIMER_CONSTANTS.MIN_MINUTES && numValue <= TIMER_CONSTANTS.MAX_MINUTES)
-      ) {
-        setMinutesInput(value);
-
-        const targetTime = value === "" ? 0 : numValue * TIME.MILLISECONDS_IN_MINUTE;
+      if (!isNaN(minutes)) {
+        const targetTime = minutes * TIME.MILLISECONDS_IN_MINUTE;
 
         currentTimer.setTargetTime(targetTime);
         setState(currentTimer.getState());
@@ -35,48 +24,29 @@ export const TimeInput = memo(() => {
 
   const handleChipClick = useCallback(
     (minutes: number) => {
-      if (!state.isRunning && !state.countdownActive) {
-        handleChange(minutes.toString());
-      }
+      const targetTime = minutes * TIME.MILLISECONDS_IN_MINUTE;
+
+      currentTimer.setTargetTime(targetTime);
+      setState(currentTimer.getState());
     },
-    [state.isRunning, state.countdownActive, handleChange],
+    [currentTimer, setState],
   );
 
-  if (state.currentMode !== "amrap" && state.currentMode !== "emom") {
+  if (state.currentMode === "forTime") {
     return null;
   }
 
   return (
-    <Box aria-label='Timer duration settings' role='group'>
+    <Box sx={{ width: "100%" }}>
       <TextField
+        fullWidth
         disabled={state.isRunning || state.countdownActive}
-        label='Minutes'
+        label='Duration (minutes)'
+        placeholder='Enter duration in minutes'
         size='small'
         type='number'
-        value={minutesInput}
-        slotProps={{
-          htmlInput: {
-            min: TIMER_CONSTANTS.MIN_MINUTES,
-            max: TIMER_CONSTANTS.MAX_MINUTES,
-            "aria-label": "Enter timer duration in minutes",
-          },
-        }}
-        sx={{
-          width: "100%",
-          mb: 2,
-          "& input": {
-            textAlign: "center",
-            fontFamily: "Roboto Mono, monospace",
-            "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
-              WebkitAppearance: "none",
-              margin: 0,
-            },
-            "&[type=number]": {
-              MozAppearance: "textfield",
-            },
-          },
-        }}
-        onChange={(e) => handleChange(e.target.value)}
+        value={state.targetTime ? state.targetTime / TIME.MILLISECONDS_IN_MINUTE : ""}
+        onChange={handleChange}
       />
 
       <Stack
@@ -93,7 +63,7 @@ export const TimeInput = memo(() => {
             label={`${time} min`}
             sx={{
               "&:hover": {
-                backgroundColor: (theme) => theme.palette.primary.main,
+                backgroundColor: (theme: Theme) => theme.palette.primary.main,
                 color: "white",
               },
             }}

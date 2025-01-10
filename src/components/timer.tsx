@@ -1,4 +1,5 @@
 import { Box, Container } from "@mui/material";
+import { FC, memo } from "react";
 
 import { ControlButtons } from "./control-buttons";
 import { CountdownSettings } from "./countdown-settings";
@@ -7,7 +8,7 @@ import { ProgressIndicator } from "./progress-indicator";
 import { TimeDisplay } from "./time-display";
 import { TimeInput } from "./time-input";
 
-export const Timer = () => {
+export const Timer: FC = memo(() => {
   return (
     <Container
       maxWidth='xs'
@@ -37,4 +38,6 @@ export const Timer = () => {
       </Box>
     </Container>
   );
-};
+});
+
+Timer.displayName = "Timer";

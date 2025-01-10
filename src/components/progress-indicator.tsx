@@ -1,9 +1,9 @@
 import { Box, LinearProgress, Theme } from "@mui/material";
-import { useMemo } from "react";
+import { FC, memo, useMemo } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 
-export const ProgressIndicator = () => {
+export const ProgressIndicator: FC = memo(() => {
   const { state } = useTimerContext();
 
   const progress = useMemo(
@@ -42,4 +42,6 @@ export const ProgressIndicator = () => {
       <LinearProgress sx={progressBarStyles} value={progress} variant='determinate' />
     </Box>
   );
-};
+});
+
+ProgressIndicator.displayName = "ProgressIndicator";
