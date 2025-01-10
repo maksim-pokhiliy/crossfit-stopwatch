@@ -1,12 +1,10 @@
-import { TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Chip, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const TimeInput = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { state, dispatch } = useTimerContext();
 
   const [minutesInput, setMinutesInput] = useState<string>("");
@@ -32,41 +30,66 @@ export const TimeInput = () => {
     }
   };
 
+  const commonTimes = [5, 10, 15, 20];
+
+  const handleChipClick = (minutes: number) => {
+    if (!state.isRunning && !state.countdownActive) {
+      handleChange(minutes.toString());
+    }
+  };
+
   if (state.currentMode !== "amrap" && state.currentMode !== "emom") {
     return null;
   }
 
   return (
-    <TextField
-      disabled={state.isRunning || state.countdownActive}
-      label='Minutes'
-      size='small'
-      type='number'
-      value={minutesInput}
-      slotProps={{
-        htmlInput: {
-          min: TIMER_CONSTANTS.MIN_MINUTES,
-          max: TIMER_CONSTANTS.MAX_MINUTES,
-        },
-      }}
-      sx={{
-        width: isMobile ? "100%" : 100,
-        "& .MuiOutlinedInput-root": {
-          height: 36.5,
-        },
-        "& input": {
-          textAlign: "center",
-          fontFamily: "Roboto Mono, monospace",
-          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
-            WebkitAppearance: "none",
-            margin: 0,
+    <Box>
+      <TextField
+        disabled={state.isRunning || state.countdownActive}
+        label='Minutes'
+        size='small'
+        type='number'
+        value={minutesInput}
+        slotProps={{
+          htmlInput: {
+            min: TIMER_CONSTANTS.MIN_MINUTES,
+            max: TIMER_CONSTANTS.MAX_MINUTES,
           },
-          "&[type=number]": {
-            MozAppearance: "textfield",
+        }}
+        sx={{
+          width: "100%",
+          mb: 2,
+          "& input": {
+            textAlign: "center",
+            fontFamily: "Roboto Mono, monospace",
+            "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+            "&[type=number]": {
+              MozAppearance: "textfield",
+            },
           },
-        },
-      }}
-      onChange={(e) => handleChange(e.target.value)}
-    />
+        }}
+        onChange={(e) => handleChange(e.target.value)}
+      />
+
+      <Stack direction='row' spacing={1} sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
+        {commonTimes.map((time) => (
+          <Chip
+            key={time}
+            disabled={state.isRunning || state.countdownActive}
+            label={`${time} min`}
+            sx={{
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.primary.main,
+                color: "white",
+              },
+            }}
+            onClick={() => handleChipClick(time)}
+          />
+        ))}
+      </Stack>
+    </Box>
   );
 };
