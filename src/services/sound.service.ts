@@ -5,14 +5,12 @@ class SoundService {
   private isInitialized = false;
 
   async initialize(): Promise<void> {
-    // Инициализируем контекст при первом взаимодействии пользователя
     if (!this.isInitialized) {
       try {
         const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
 
         this.audioContext = new AudioContext();
 
-        // Для iOS нужно возобновить контекст
         if (this.audioContext.state === "suspended") {
           await this.audioContext.resume();
         }
@@ -67,7 +65,7 @@ class SoundService {
       if (type === "shortBeep") {
         await this.createBeep(880, 0.1);
       } else {
-        await this.createBeep(1320, 0.6);
+        await this.createBeep(440, 0.6);
       }
 
       this.lastPlayTime = now;
