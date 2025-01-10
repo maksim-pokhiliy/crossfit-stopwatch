@@ -1,16 +1,16 @@
-import { Box, Slider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Slider, Typography, useMediaQuery } from "@mui/material";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const CountdownSettings = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { state, dispatch } = useTimerContext();
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const { state, currentTimer, setState } = useTimerContext();
 
   const handleChange = (_: Event, value: number | number[]) => {
     if (typeof value === "number") {
-      dispatch({ type: "SET_COUNTDOWN_DURATION", payload: value });
+      currentTimer.setCountdownDuration(value);
+      setState(currentTimer.getState());
     }
   };
 

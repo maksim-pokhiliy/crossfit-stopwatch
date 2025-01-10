@@ -1,4 +1,4 @@
-import { Box, Fade, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Fade, Typography, useMediaQuery } from "@mui/material";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 
@@ -12,8 +12,7 @@ const formatTime = (ms: number): string => {
 };
 
 export const TimerDisplay = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const { state } = useTimerContext();
 
   const getCountdownText = () => {
@@ -45,7 +44,8 @@ export const TimerDisplay = () => {
               position: "absolute",
               left: "50%",
               transform: "translateX(-50%)",
-              color: state.countdownValue === 0 ? theme.palette.success.main : "inherit",
+              color: (theme) =>
+                state.countdownValue === 0 ? theme.palette.success.main : "inherit",
               fontSize: isMobile ? "4rem" : "6rem",
             }}
           >

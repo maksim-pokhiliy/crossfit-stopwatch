@@ -3,17 +3,17 @@ import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import { useTimerContext } from "../hooks/use-timer-context";
 import { TimerMode } from "../types/timer";
 
-const modeDescriptions = {
+const modeDescriptions: Record<TimerMode, string> = {
   forTime: "Complete the workout as fast as possible",
   amrap: "Complete As Many Rounds As Possible in a set time",
   emom: "Every Minute On the Minute - perform the workout at the start of each minute",
 };
 
 export const ModeButtons = () => {
-  const { state, dispatch } = useTimerContext();
+  const { state, setMode } = useTimerContext();
 
   const handleModeChange = (mode: TimerMode) => {
-    dispatch({ type: "SET_MODE", payload: mode });
+    setMode(mode);
   };
 
   return (
