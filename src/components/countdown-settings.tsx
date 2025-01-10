@@ -1,11 +1,11 @@
-import { Box, Slider, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { memo, useCallback } from "react";
+import { Box, Slider, Theme, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { FC, memo, useCallback } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
-export const CountdownSettings = memo(() => {
-  const theme = useTheme();
+export const CountdownSettings: FC = memo(() => {
+  const theme = useTheme<Theme>();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { state, currentTimer, setState } = useTimerContext();
 

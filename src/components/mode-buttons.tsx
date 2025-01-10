@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Tooltip } from "@mui/material";
-import { memo, useCallback } from "react";
+import { FC, memo, useCallback } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 import { TimerMode } from "../types/timer";
@@ -10,7 +10,7 @@ const modeDescriptions: Record<TimerMode, string> = {
   emom: "Every Minute On the Minute - perform the workout at the start of each minute",
 };
 
-export const ModeButtons = memo(() => {
+export const ModeButtons: FC = memo(() => {
   const { state, setMode } = useTimerContext();
 
   const handleModeChange = useCallback(
