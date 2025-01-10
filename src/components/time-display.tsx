@@ -1,15 +1,20 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { memo, useEffect, useMemo } from "react";
 
+import { TIME, TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 import { soundService } from "../services/sound.service";
 
 const formatTime = (ms: number): string => {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const milliseconds = Math.floor((ms % 1000) / 10);
+  const totalSeconds = Math.floor(ms / TIME.MILLISECONDS_IN_SECOND);
+  const hours = Math.floor(totalSeconds / TIME.SECONDS_IN_MINUTE / TIME.MINUTES_IN_HOUR);
+
+  const minutes = Math.floor(
+    (totalSeconds % (TIME.SECONDS_IN_MINUTE * TIME.MINUTES_IN_HOUR)) / TIME.SECONDS_IN_MINUTE,
+  );
+
+  const seconds = totalSeconds % TIME.SECONDS_IN_MINUTE;
+  const milliseconds = Math.floor((ms % TIME.MILLISECONDS_IN_SECOND) / 10);
 
   const pad = (num: number, size: number = 2) => num.toString().padStart(size, "0");
 
@@ -29,13 +34,13 @@ export const TimeDisplay = memo(() => {
     }
 
     if (state.currentMode === "emom" && state.isRunning) {
-      const timeInMinute = state.elapsedTime % 60000;
+      const timeInMinute = state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
 
-      if (timeInMinute >= 55000) {
+      if (timeInMinute >= TIMER_CONSTANTS.EMOM_DANGER_TIME) {
         return theme.palette.error.main;
       }
 
-      if (timeInMinute >= 50000) {
+      if (timeInMinute >= TIMER_CONSTANTS.EMOM_WARNING_TIME) {
         return theme.palette.warning.main;
       }
     }
@@ -56,15 +61,19 @@ export const TimeDisplay = memo(() => {
   useEffect(() => {
     const playCountdown = async () => {
       if (state.countdownActive) {
-        const seconds = Math.floor(state.countdownValue / 1000);
+        const seconds = Math.floor(state.countdownValue / TIME.MILLISECONDS_IN_SECOND);
 
         await soundService.initialize();
         await soundService.playCountdownSound(seconds);
-      } else if (!state.countdownActive && state.isRunning && state.elapsedTime < 100) {
+      } else if (
+        !state.countdownActive &&
+        state.isRunning &&
+        state.elapsedTime < TIMER_CONSTANTS.START_SOUND_THRESHOLD
+      ) {
         await soundService.initialize();
         await soundService.playStartSound();
       } else if (state.currentMode === "emom" && state.isRunning) {
-        const timeInMinute = state.elapsedTime % 60000;
+        const timeInMinute = state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
 
         await soundService.initialize();
         await soundService.playEmomSound(timeInMinute);
