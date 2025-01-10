@@ -1,10 +1,9 @@
-import { Box, LinearProgress, useTheme } from "@mui/material";
+import { Box, LinearProgress, Theme } from "@mui/material";
 import { useMemo } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const ProgressIndicator = () => {
-  const theme = useTheme();
   const { state } = useTimerContext();
 
   const progress = useMemo(
@@ -16,10 +15,11 @@ export const ProgressIndicator = () => {
     () => ({
       height: 8,
       borderRadius: 4,
-      backgroundColor: theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
+      backgroundColor: (theme: Theme) =>
+        theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
       "& .MuiLinearProgress-bar": {
         borderRadius: 4,
-        backgroundColor:
+        backgroundColor: (theme: Theme) =>
           progress >= 100
             ? theme.palette.error.main
             : progress >= 80
@@ -28,7 +28,7 @@ export const ProgressIndicator = () => {
         transition: "transform 0.1s linear",
       },
     }),
-    [progress, theme.palette],
+    [progress],
   );
 
   const containerStyles = useMemo(() => ({ width: "100%", mt: 2 }), []);

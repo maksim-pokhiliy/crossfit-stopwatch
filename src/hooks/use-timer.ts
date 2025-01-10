@@ -1,111 +1,44 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 import { TimerMode } from "../types/timer";
 
 import { useTimerContext } from "./use-timer-context";
 
 export const useTimer = () => {
-  const { state, dispatch } = useTimerContext();
+  const { state, currentTimer, setMode, startTimer, stopTimer, resetTimer } = useTimerContext();
 
-  const setMode = useCallback(
+  const handleSetMode = useCallback(
     (mode: TimerMode) => {
-      dispatch({ type: "SET_MODE", payload: mode });
+      setMode(mode);
     },
-    [dispatch],
+    [setMode],
   );
 
-  const startTimer = useCallback(
+  const handleStartTimer = useCallback(
     (targetTime?: number) => {
       if (state.isRunning || state.countdownActive) {
         return;
       }
 
-      dispatch({ type: "START_TIMER", payload: { targetTime } });
+      startTimer(targetTime);
     },
-    [dispatch, state.isRunning, state.countdownActive],
+    [state.isRunning, state.countdownActive, startTimer],
   );
 
-  const stopTimer = useCallback(() => {
-    dispatch({ type: "STOP_TIMER" });
-  }, [dispatch]);
+  const handleStopTimer = useCallback(() => {
+    stopTimer();
+  }, [stopTimer]);
 
-  const resetTimer = useCallback(() => {
-    dispatch({ type: "RESET_TIMER" });
-  }, [dispatch]);
-
-  const updateTimer = useCallback(() => {
-    if (state.countdownActive && state.startTime) {
-      const now = Date.now();
-      const elapsed = now - state.startTime;
-      const remaining = Math.max(0, state.countdownDuration - elapsed);
-
-      if (remaining > 0) {
-        dispatch({
-          type: "UPDATE_COUNTDOWN",
-          payload: remaining,
-        });
-      } else {
-        dispatch({ type: "FINISH_COUNTDOWN" });
-      }
-    } else if (state.isRunning && state.startTime) {
-      const now = Date.now();
-      const newElapsedTime = now - state.startTime;
-
-      if (state.currentMode === "emom") {
-        const currentMinute = Math.floor(newElapsedTime / 60000);
-        const currentRound = currentMinute + 1;
-
-        if (currentRound !== state.currentRound) {
-          dispatch({
-            type: "UPDATE_TIMER",
-            payload: { elapsedTime: newElapsedTime, currentRound },
-          });
-        } else {
-          dispatch({
-            type: "UPDATE_TIMER",
-            payload: { elapsedTime: newElapsedTime },
-          });
-        }
-
-        if (state.targetTime > 0 && newElapsedTime >= state.targetTime) {
-          dispatch({ type: "STOP_TIMER" });
-        }
-      } else {
-        dispatch({
-          type: "UPDATE_TIMER",
-          payload: { elapsedTime: newElapsedTime },
-        });
-
-        if (
-          state.currentMode === "amrap" &&
-          state.targetTime > 0 &&
-          newElapsedTime >= state.targetTime
-        ) {
-          dispatch({ type: "STOP_TIMER" });
-        }
-      }
-    }
-  }, [state, dispatch]);
-
-  useEffect(() => {
-    let intervalId: number;
-
-    if ((state.isRunning && state.startTime) || state.countdownActive) {
-      intervalId = window.setInterval(updateTimer, 10);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [state.isRunning, state.startTime, state.countdownActive, updateTimer]);
+  const handleResetTimer = useCallback(() => {
+    resetTimer();
+  }, [resetTimer]);
 
   return {
     state,
-    setMode,
-    startTimer,
-    stopTimer,
-    resetTimer,
+    currentTimer,
+    setMode: handleSetMode,
+    startTimer: handleStartTimer,
+    stopTimer: handleStopTimer,
+    resetTimer: handleResetTimer,
   };
 };

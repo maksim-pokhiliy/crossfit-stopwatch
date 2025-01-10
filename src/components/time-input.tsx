@@ -5,8 +5,7 @@ import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const TimeInput = () => {
-  const { state, dispatch } = useTimerContext();
-
+  const { state, currentTimer, setState } = useTimerContext();
   const [minutesInput, setMinutesInput] = useState<string>("");
 
   useEffect(() => {
@@ -23,10 +22,11 @@ export const TimeInput = () => {
       (numValue >= TIMER_CONSTANTS.MIN_MINUTES && numValue <= TIMER_CONSTANTS.MAX_MINUTES)
     ) {
       setMinutesInput(value);
-      dispatch({
-        type: "SET_TARGET_TIME",
-        payload: value === "" ? 0 : numValue * 60000,
-      });
+
+      const targetTime = value === "" ? 0 : numValue * 60000;
+
+      currentTimer.setTargetTime(targetTime);
+      setState(currentTimer.getState());
     }
   };
 
@@ -74,7 +74,7 @@ export const TimeInput = () => {
         onChange={(e) => handleChange(e.target.value)}
       />
 
-      <Stack direction='row' spacing={1} sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
+      <Stack direction='row' sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
         {commonTimes.map((time) => (
           <Chip
             key={time}

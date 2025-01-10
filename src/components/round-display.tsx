@@ -1,10 +1,9 @@
-import { Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const RoundDisplay = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const { state } = useTimerContext();
 
   if (state.currentMode !== "emom") {
@@ -18,7 +17,7 @@ export const RoundDisplay = () => {
         fontFamily: "Roboto Mono, monospace",
         textAlign: "center",
         minWidth: "120px",
-        color: theme.palette.text.secondary,
+        color: (theme) => theme.palette.text.secondary,
       }}
     >
       Round: {state.currentRound}
