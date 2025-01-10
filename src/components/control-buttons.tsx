@@ -2,19 +2,33 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import Refresh from "@mui/icons-material/Refresh";
 import Stop from "@mui/icons-material/Stop";
 import { Button, ButtonGroup } from "@mui/material";
+import { useCallback } from "react";
 
 import { useTimer } from "../hooks/use-timer";
+import { soundService } from "../services/sound.service";
 
 export const ControlButtons = () => {
   const { state, startTimer, stopTimer, resetTimer } = useTimer();
 
-  const handleStart = () => {
+  const handleStart = useCallback(async () => {
+    await soundService.initialize();
+
     if (state.currentMode === "forTime") {
       startTimer();
     } else if (state.targetTime > 0) {
       startTimer(state.targetTime);
     }
-  };
+  }, [state.currentMode, state.targetTime, startTimer]);
+
+  const handleStop = useCallback(async () => {
+    await soundService.initialize();
+    stopTimer();
+  }, [stopTimer]);
+
+  const handleReset = useCallback(async () => {
+    await soundService.initialize();
+    resetTimer();
+  }, [resetTimer]);
 
   const isStartDisabled =
     (state.currentMode !== "forTime" && !state.targetTime) ||
@@ -46,7 +60,7 @@ export const ControlButtons = () => {
         Start
       </Button>
 
-      <Button color='error' disabled={!state.isRunning} startIcon={<Stop />} onClick={stopTimer}>
+      <Button color='error' disabled={!state.isRunning} startIcon={<Stop />} onClick={handleStop}>
         Stop
       </Button>
 
@@ -54,7 +68,7 @@ export const ControlButtons = () => {
         color='warning'
         disabled={state.countdownActive}
         startIcon={<Refresh />}
-        onClick={resetTimer}
+        onClick={handleReset}
       >
         Reset
       </Button>

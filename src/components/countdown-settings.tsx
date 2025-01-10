@@ -1,18 +1,23 @@
-import { Box, Slider, Typography, useMediaQuery } from "@mui/material";
+import { Box, Slider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useCallback } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const CountdownSettings = () => {
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { state, currentTimer, setState } = useTimerContext();
 
-  const handleChange = (_: Event, value: number | number[]) => {
-    if (typeof value === "number") {
-      currentTimer.setCountdownDuration(value);
-      setState(currentTimer.getState());
-    }
-  };
+  const handleChange = useCallback(
+    (_: Event, value: number | number[]) => {
+      if (typeof value === "number") {
+        currentTimer.setCountdownDuration(value);
+        setState(currentTimer.getState());
+      }
+    },
+    [currentTimer, setState],
+  );
 
   return (
     <Box sx={{ width: "100%", mt: isMobile ? 2 : 4, px: isMobile ? 0 : 2 }}>

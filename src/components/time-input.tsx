@@ -1,5 +1,5 @@
 import { Box, Chip, Stack, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
@@ -14,29 +14,35 @@ export const TimeInput = () => {
     }
   }, [state.isRunning, state.countdownActive, state.currentMode]);
 
-  const handleChange = (value: string) => {
-    const numValue = parseInt(value);
+  const handleChange = useCallback(
+    (value: string) => {
+      const numValue = parseInt(value);
 
-    if (
-      value === "" ||
-      (numValue >= TIMER_CONSTANTS.MIN_MINUTES && numValue <= TIMER_CONSTANTS.MAX_MINUTES)
-    ) {
-      setMinutesInput(value);
+      if (
+        value === "" ||
+        (numValue >= TIMER_CONSTANTS.MIN_MINUTES && numValue <= TIMER_CONSTANTS.MAX_MINUTES)
+      ) {
+        setMinutesInput(value);
 
-      const targetTime = value === "" ? 0 : numValue * 60000;
+        const targetTime = value === "" ? 0 : numValue * 60000;
 
-      currentTimer.setTargetTime(targetTime);
-      setState(currentTimer.getState());
-    }
-  };
+        currentTimer.setTargetTime(targetTime);
+        setState(currentTimer.getState());
+      }
+    },
+    [currentTimer, setState],
+  );
+
+  const handleChipClick = useCallback(
+    (minutes: number) => {
+      if (!state.isRunning && !state.countdownActive) {
+        handleChange(minutes.toString());
+      }
+    },
+    [state.isRunning, state.countdownActive, handleChange],
+  );
 
   const commonTimes = [5, 10, 15, 20];
-
-  const handleChipClick = (minutes: number) => {
-    if (!state.isRunning && !state.countdownActive) {
-      handleChange(minutes.toString());
-    }
-  };
 
   if (state.currentMode !== "amrap" && state.currentMode !== "emom") {
     return null;

@@ -1,4 +1,5 @@
 import { Button, ButtonGroup, Tooltip } from "@mui/material";
+import { useCallback } from "react";
 
 import { useTimerContext } from "../hooks/use-timer-context";
 import { TimerMode } from "../types/timer";
@@ -12,9 +13,12 @@ const modeDescriptions: Record<TimerMode, string> = {
 export const ModeButtons = () => {
   const { state, setMode } = useTimerContext();
 
-  const handleModeChange = (mode: TimerMode) => {
-    setMode(mode);
-  };
+  const handleModeChange = useCallback(
+    (mode: TimerMode) => {
+      setMode(mode);
+    },
+    [setMode],
+  );
 
   return (
     <ButtonGroup
