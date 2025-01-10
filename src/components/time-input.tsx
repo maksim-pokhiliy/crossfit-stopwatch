@@ -74,6 +74,7 @@ export const TimeInput: FC = memo(() => {
       <Stack
         aria-label='Quick duration presets'
         direction='row'
+        justifyContent='center'
         role='group'
         sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}
       >
