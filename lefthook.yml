@@ -16,6 +16,10 @@ pre-commit:
       glob: "{src,public}/**/*.{ts,tsx}"
       run: pnpm tsc --noEmit --incremental
 
+    test:
+      glob: "{src}/**/*.{ts,tsx}"
+      run: pnpm test --ci
+
 commit-msg:
   parallel: true
   commands:
