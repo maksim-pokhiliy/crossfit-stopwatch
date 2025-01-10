@@ -1,10 +1,10 @@
 import { Box, Chip, Stack, TextField } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
-export const TimeInput = () => {
+export const TimeInput = memo(() => {
   const { state, currentTimer, setState } = useTimerContext();
   const [minutesInput, setMinutesInput] = useState<string>("");
 
@@ -41,8 +41,6 @@ export const TimeInput = () => {
     },
     [state.isRunning, state.countdownActive, handleChange],
   );
-
-  const commonTimes = [5, 10, 15, 20];
 
   if (state.currentMode !== "amrap" && state.currentMode !== "emom") {
     return null;
@@ -81,7 +79,7 @@ export const TimeInput = () => {
       />
 
       <Stack direction='row' sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
-        {commonTimes.map((time) => (
+        {[5, 10, 15, 20].map((time) => (
           <Chip
             key={time}
             disabled={state.isRunning || state.countdownActive}
@@ -98,4 +96,6 @@ export const TimeInput = () => {
       </Stack>
     </Box>
   );
-};
+});
+
+TimeInput.displayName = "TimeInput";

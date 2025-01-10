@@ -1,10 +1,10 @@
 import { Box, Slider, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 
 import { TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
-export const CountdownSettings = () => {
+export const CountdownSettings = memo(() => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { state, currentTimer, setState } = useTimerContext();
@@ -48,4 +48,6 @@ export const CountdownSettings = () => {
       />
     </Box>
   );
-};
+});
+
+CountdownSettings.displayName = "CountdownSettings";
