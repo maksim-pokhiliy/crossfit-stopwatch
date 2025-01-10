@@ -68,9 +68,9 @@ tasks:
       - pnpm test
 
   test-check:
-    desc: Run tests in CI mode
+    desc: Run tests in CI mode with coverage
     cmds:
-      - pnpm test --ci --coverage
+      - pnpm test:ci
 
   clean:
     desc: Clean project artifacts
