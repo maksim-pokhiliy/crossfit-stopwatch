@@ -81,19 +81,29 @@ export const TimeDisplay = memo(() => {
   ]);
 
   return (
-    <Box sx={containerStyles}>
+    <Box aria-live='polite' role='timer' sx={containerStyles}>
       {state.currentMode === "emom" && state.isRunning && (
-        <Typography gutterBottom color='text.secondary' variant='h6'>
+        <Typography
+          gutterBottom
+          aria-label={`Round ${state.currentRound}`}
+          color='text.secondary'
+          variant='h6'
+        >
           Round {state.currentRound}
         </Typography>
       )}
 
-      <Typography component='div' sx={timeStyles} variant='h2'>
+      <Typography
+        aria-label={`${state.countdownActive ? "Countdown" : state.currentMode} timer: ${formattedTime}`}
+        component='div'
+        sx={timeStyles}
+        variant='h2'
+      >
         {formattedTime}
       </Typography>
 
       {state.countdownActive && state.countdownDuration > 0 && (
-        <Typography color='text.secondary' variant='subtitle1'>
+        <Typography aria-label='Get ready for workout' color='text.secondary' variant='subtitle1'>
           Get ready!
         </Typography>
       )}
