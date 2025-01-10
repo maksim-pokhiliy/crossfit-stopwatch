@@ -47,7 +47,7 @@ export const TimeInput = memo(() => {
   }
 
   return (
-    <Box>
+    <Box aria-label='Timer duration settings' role='group'>
       <TextField
         disabled={state.isRunning || state.countdownActive}
         label='Minutes'
@@ -58,6 +58,7 @@ export const TimeInput = memo(() => {
           htmlInput: {
             min: TIMER_CONSTANTS.MIN_MINUTES,
             max: TIMER_CONSTANTS.MAX_MINUTES,
+            "aria-label": "Enter timer duration in minutes",
           },
         }}
         sx={{
@@ -78,10 +79,16 @@ export const TimeInput = memo(() => {
         onChange={(e) => handleChange(e.target.value)}
       />
 
-      <Stack direction='row' sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
+      <Stack
+        aria-label='Quick duration presets'
+        direction='row'
+        role='group'
+        sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}
+      >
         {[5, 10, 15, 20].map((time) => (
           <Chip
             key={time}
+            aria-label={`Set timer to ${time} minutes`}
             disabled={state.isRunning || state.countdownActive}
             label={`${time} min`}
             sx={{

@@ -38,7 +38,9 @@ export const ControlButtons = memo(() => {
   return (
     <ButtonGroup
       disableElevation
+      aria-label='Timer controls'
       orientation='horizontal'
+      role='group'
       variant='contained'
       sx={{
         width: "100%",
@@ -52,6 +54,7 @@ export const ControlButtons = memo(() => {
       }}
     >
       <Button
+        aria-label={`Start ${state.currentMode} timer`}
         color='success'
         disabled={isStartDisabled}
         startIcon={<PlayArrow />}
@@ -60,11 +63,18 @@ export const ControlButtons = memo(() => {
         Start
       </Button>
 
-      <Button color='error' disabled={!state.isRunning} startIcon={<Stop />} onClick={handleStop}>
+      <Button
+        aria-label='Stop timer'
+        color='error'
+        disabled={!state.isRunning}
+        startIcon={<Stop />}
+        onClick={handleStop}
+      >
         Stop
       </Button>
 
       <Button
+        aria-label='Reset timer'
         color='warning'
         disabled={state.countdownActive}
         startIcon={<Refresh />}
