@@ -3,7 +3,9 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { STORAGE_KEYS } from "../constants/timer";
 import { BaseTimer, TimerState } from "../models/base-timer";
 import { TimerFactory } from "../models/timer-factory";
+import { timerReducer } from "../models/timer-reducer";
 import { TimerMode } from "../types/timer";
+import { TimerAction } from "../types/timer-actions";
 
 import { TimerContext } from "./timer-context";
 
@@ -19,6 +21,11 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<TimerState>(() => timerRef.current.getState());
   const animationFrameRef = useRef<number>(0);
   const lastUpdateTimeRef = useRef<number>(0);
+
+  const dispatch = useCallback((action: TimerAction) => {
+    timerReducer(timerRef.current, action);
+    setState(timerRef.current.getState());
+  }, []);
 
   const animate = useCallback((timestamp: number) => {
     if (lastUpdateTimeRef.current === 0) {
@@ -47,35 +54,32 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
   const startTimer = useCallback(
     (targetTime?: number) => {
-      timerRef.current.start(targetTime);
-      setState(timerRef.current.getState());
+      dispatch({ type: "START_TIMER", targetTime });
       lastUpdateTimeRef.current = 0;
       animationFrameRef.current = requestAnimationFrame(animate);
     },
-    [animate],
+    [animate, dispatch],
   );
 
   const stopTimer = useCallback(() => {
-    timerRef.current.stop();
-    setState(timerRef.current.getState());
+    dispatch({ type: "STOP_TIMER" });
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
 
     lastUpdateTimeRef.current = 0;
-  }, []);
+  }, [dispatch]);
 
   const resetTimer = useCallback(() => {
-    timerRef.current.reset();
-    setState(timerRef.current.getState());
+    dispatch({ type: "RESET_TIMER" });
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
 
     lastUpdateTimeRef.current = 0;
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (state.isRunning || state.countdownActive) {
