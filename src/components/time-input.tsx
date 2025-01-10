@@ -1,7 +1,7 @@
 import { Box, Chip, Stack, TextField } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react";
 
-import { TIMER_CONSTANTS } from "../constants/timer";
+import { TIME, TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const TimeInput = memo(() => {
@@ -24,7 +24,7 @@ export const TimeInput = memo(() => {
       ) {
         setMinutesInput(value);
 
-        const targetTime = value === "" ? 0 : numValue * 60000;
+        const targetTime = value === "" ? 0 : numValue * TIME.MILLISECONDS_IN_MINUTE;
 
         currentTimer.setTargetTime(targetTime);
         setState(currentTimer.getState());

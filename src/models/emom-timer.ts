@@ -1,8 +1,8 @@
+import { TIME, TIMER_CONSTANTS } from "../constants/timer";
+
 import { BaseTimer } from "./base-timer";
 
 export class EmomTimer extends BaseTimer {
-  private readonly MINUTE_IN_MS = 60000;
-
   constructor() {
     super("emom");
   }
@@ -32,11 +32,11 @@ export class EmomTimer extends BaseTimer {
       return this.state.countdownValue;
     }
 
-    return this.state.elapsedTime % this.MINUTE_IN_MS;
+    return this.state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
   }
 
   private updateRound(): void {
-    const currentMinute = Math.floor(this.state.elapsedTime / this.MINUTE_IN_MS);
+    const currentMinute = Math.floor(this.state.elapsedTime / TIME.MILLISECONDS_IN_MINUTE);
     const newRound = currentMinute + 1;
 
     if (newRound !== this.state.currentRound) {
@@ -53,14 +53,14 @@ export class EmomTimer extends BaseTimer {
   }
 
   isLastTenSeconds(): boolean {
-    const timeInMinute = this.state.elapsedTime % this.MINUTE_IN_MS;
+    const timeInMinute = this.state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
 
-    return timeInMinute >= 50000;
+    return timeInMinute >= TIMER_CONSTANTS.EMOM_WARNING_TIME;
   }
 
   isLastFiveSeconds(): boolean {
-    const timeInMinute = this.state.elapsedTime % this.MINUTE_IN_MS;
+    const timeInMinute = this.state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
 
-    return timeInMinute >= 55000;
+    return timeInMinute >= TIMER_CONSTANTS.EMOM_DANGER_TIME;
   }
 }
