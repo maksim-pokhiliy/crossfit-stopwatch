@@ -1,7 +1,7 @@
 import { Box, Chip, Stack, TextField, Theme } from "@mui/material";
 import { ChangeEvent, FC, memo, useCallback } from "react";
 
-import { TIME } from "../constants/timer";
+import { TIME, TIMER_CONSTANTS } from "../constants/timer";
 import { useTimerContext } from "../hooks/use-timer-context";
 
 export const TimeInput: FC = memo(() => {
@@ -46,6 +46,28 @@ export const TimeInput: FC = memo(() => {
         size='small'
         type='number'
         value={state.targetTime ? state.targetTime / TIME.MILLISECONDS_IN_MINUTE : ""}
+        slotProps={{
+          htmlInput: {
+            min: TIMER_CONSTANTS.MIN_MINUTES,
+            max: TIMER_CONSTANTS.MAX_MINUTES,
+            "aria-label": "Enter timer duration in minutes",
+          },
+        }}
+        sx={{
+          width: "100%",
+          mb: 2,
+          "& input": {
+            textAlign: "center",
+            fontFamily: "Roboto Mono, monospace",
+            "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+            "&[type=number]": {
+              MozAppearance: "textfield",
+            },
+          },
+        }}
         onChange={handleChange}
       />
 
