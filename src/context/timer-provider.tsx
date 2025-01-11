@@ -8,7 +8,7 @@ import { TimerContext } from "./timer-context";
 
 export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
   const [currentTimer, setCurrentTimer] = useState<BaseTimer>(() =>
-    TimerFactory.createTimer("forTime"),
+    TimerFactory.createTimer(TimerFactory.getLastMode()),
   );
 
   const [state, setState] = useState<TimerState>(() => currentTimer.getState());

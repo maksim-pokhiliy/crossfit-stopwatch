@@ -10,6 +10,11 @@ import { soundService } from "../services/sound.service";
 export const ControlButtons: FC = memo(() => {
   const { state, startTimer, stopTimer, resetTimer } = useTimer();
 
+  const isStartDisabled =
+    (state.currentMode !== "forTime" && !state.targetTime) ||
+    state.isRunning ||
+    state.countdownActive;
+
   const handleStart = useCallback(async () => {
     await soundService.initialize();
 
@@ -29,11 +34,6 @@ export const ControlButtons: FC = memo(() => {
     await soundService.initialize();
     resetTimer();
   }, [resetTimer]);
-
-  const isStartDisabled =
-    (state.currentMode !== "forTime" && !state.targetTime) ||
-    state.isRunning ||
-    state.countdownActive;
 
   return (
     <ButtonGroup

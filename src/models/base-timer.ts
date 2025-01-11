@@ -18,7 +18,7 @@ export abstract class BaseTimer {
 
   constructor(mode: string) {
     const savedDuration = localStorage.getItem("countdownDuration");
-    const countdownDuration = savedDuration ? parseInt(savedDuration) : 3000;
+    const countdownDuration = savedDuration ? Math.max(0, parseInt(savedDuration)) : 3000;
 
     this.state = {
       startTime: null,
@@ -45,30 +45,40 @@ export abstract class BaseTimer {
       return;
     }
 
+    const now = Date.now();
+
     if (this.state.countdownDuration > 0) {
       this.state = {
         ...this.state,
         countdownActive: true,
         countdownValue: this.state.countdownDuration,
-        targetTime: targetTime ?? this.state.targetTime,
-        startTime: Date.now(),
+        targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
+        startTime: now,
       };
     } else {
       this.state = {
         ...this.state,
-        startTime: Date.now(),
-        targetTime: targetTime ?? this.state.targetTime,
+        startTime: now,
+        targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
         isRunning: true,
       };
     }
   }
 
   stop(): void {
+    if (!this.state.startTime) {
+      return;
+    }
+
+    const now = Date.now();
+    const elapsed = Math.min(now - this.state.startTime, Number.MAX_SAFE_INTEGER);
+
     this.state = {
       ...this.state,
       isRunning: false,
       startTime: null,
       countdownActive: false,
+      elapsedTime: this.state.elapsedTime + elapsed,
     };
   }
 
@@ -90,6 +100,10 @@ export abstract class BaseTimer {
       return;
     }
 
+    if (duration < 0) {
+      return;
+    }
+
     localStorage.setItem("countdownDuration", duration.toString());
 
     this.state = {
@@ -104,6 +118,10 @@ export abstract class BaseTimer {
       return;
     }
 
+    if (time < 0) {
+      return;
+    }
+
     this.state = {
       ...this.state,
       targetTime: time,
@@ -115,23 +133,34 @@ export abstract class BaseTimer {
       return;
     }
 
+    const now = Date.now();
+    const maxTime = Number.MAX_SAFE_INTEGER;
+
     if (this.state.countdownActive) {
-      const now = Date.now();
-      const elapsed = now - this.state.startTime;
+      const elapsed = Math.min(now - this.state.startTime, maxTime);
+      const countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
 
-      this.state.countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
-
-      if (this.state.countdownValue === 0) {
+      if (countdownValue === 0) {
         this.state = {
           ...this.state,
           countdownActive: false,
           isRunning: true,
-          startTime: Date.now(),
-          elapsedTime: 0,
+          startTime: now,
+        };
+      } else {
+        this.state = {
+          ...this.state,
+          countdownValue,
         };
       }
     } else if (this.state.isRunning) {
-      this.state.elapsedTime = Date.now() - this.state.startTime;
+      const elapsed = Math.min(now - this.state.startTime, maxTime);
+
+      this.state = {
+        ...this.state,
+        elapsedTime: this.state.elapsedTime + elapsed,
+        startTime: now,
+      };
     }
   }
 }
