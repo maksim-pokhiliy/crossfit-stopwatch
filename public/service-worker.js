@@ -13,7 +13,6 @@ const ASSETS_TO_CACHE = [
   "/sounds/long-beep.mp3",
 ];
 
-// Install service worker and cache assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -23,7 +22,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate service worker and clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -35,7 +33,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Serve cached content when offline
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
     return;
