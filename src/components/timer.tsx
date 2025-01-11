@@ -10,33 +10,55 @@ import { TimeInput } from "./time-input";
 
 export const Timer: FC = memo(() => {
   return (
-    <Container
-      maxWidth='xs'
+    <Box
       sx={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        px: 4,
+        backgroundColor: "background.default",
+        minHeight: "100vh",
+        position: "relative",
+        "::before": {
+          content: '""',
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100%",
+          backgroundImage: "url('noise.png')",
+          backgroundSize: "109px",
+          backgroundRepeat: "repeat",
+          opacity: 0.06,
+          pointerEvents: "none",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        },
       }}
     >
-      <Box
+      <Container
+        maxWidth='xs'
         sx={{
+          height: "100vh",
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
-          gap: 4,
-          width: "100%",
+          px: 4,
         }}
       >
-        <ModeButtons />
-        <TimeDisplay />
-        <TimeInput />
-        <ControlButtons />
-        <ProgressIndicator />
-        <CountdownSettings />
-      </Box>
-    </Container>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+            width: "100%",
+          }}
+        >
+          <ModeButtons />
+          <TimeDisplay />
+          <TimeInput />
+          <ControlButtons />
+          <ProgressIndicator />
+          <CountdownSettings />
+        </Box>
+      </Container>
+    </Box>
   );
 });
 
