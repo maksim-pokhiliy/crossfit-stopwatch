@@ -2,6 +2,13 @@ import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { soundService } from "./sound.service";
 
+// Расширяем тип Window для поддержки webkitAudioContext
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 describe("SoundService", () => {
   let mockAudioContext: {
     createOscillator: Mock;
@@ -73,6 +80,23 @@ describe("SoundService", () => {
       await soundService.initialize();
 
       expect(AudioContext).toHaveBeenCalled();
+      expect((soundService as any).audioContext).toBe(mockAudioContext);
+      expect((soundService as any).isInitialized).toBe(true);
+    });
+
+    it("should use webkitAudioContext when AudioContext is not available", async () => {
+      // Удаляем AudioContext
+      vi.stubGlobal("AudioContext", undefined);
+
+      // Мокаем webkitAudioContext
+      vi.stubGlobal(
+        "webkitAudioContext",
+        vi.fn().mockImplementation(() => mockAudioContext),
+      );
+
+      await soundService.initialize();
+
+      expect(window.webkitAudioContext).toHaveBeenCalled();
       expect((soundService as any).audioContext).toBe(mockAudioContext);
       expect((soundService as any).isInitialized).toBe(true);
     });
