@@ -62,6 +62,11 @@ class SoundService {
     }
 
     try {
+      if (this.audioContext?.state === "suspended") {
+        this.isInitialized = false;
+        await this.initialize();
+      }
+
       if (type === "shortBeep") {
         await this.createBeep(880, 0.1);
       } else {

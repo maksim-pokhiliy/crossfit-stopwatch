@@ -109,6 +109,35 @@ describe("SoundService", () => {
         expect.any(Error),
       );
     });
+
+    it("should reinitialize when audio context is suspended", async () => {
+      // Первая инициализация
+      await soundService.initialize();
+      expect((soundService as any).audioContext).toBe(mockAudioContext);
+
+      // Меняем состояние на suspended
+      mockAudioContext.state = "suspended";
+
+      // Пытаемся воспроизвести звук
+      await soundService.playSound("shortBeep");
+
+      // Должна произойти повторная инициализация
+      expect(AudioContext).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle failed audio context initialization", async () => {
+      // Первая инициализация
+      await soundService.initialize();
+
+      // Симулируем ситуацию, когда контекст не создался
+      (soundService as any).audioContext = null;
+
+      // Пытаемся воспроизвести звук
+      await soundService.playSound("shortBeep");
+
+      // Не должно быть попыток создать осциллятор
+      expect(mockAudioContext.createOscillator).not.toHaveBeenCalled();
+    });
   });
 
   describe("playSound", () => {
