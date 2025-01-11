@@ -12,7 +12,8 @@
     "lint-check": "eslint .",
     "json-check": "prettier --check **/*.json --plugin=prettier-plugin-sort-json",
     "json-lint": "prettier --write **/*.json --plugin=prettier-plugin-sort-json",
-    "tscheck": "tsc"
+    "tscheck": "tsc",
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
