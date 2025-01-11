@@ -18,7 +18,7 @@ export abstract class BaseTimer {
 
   constructor(mode: string) {
     const savedDuration = localStorage.getItem("countdownDuration");
-    const countdownDuration = savedDuration ? parseInt(savedDuration) : 3000;
+    const countdownDuration = savedDuration ? Math.max(0, parseInt(savedDuration)) : 3000;
 
     this.state = {
       startTime: null,
@@ -50,14 +50,14 @@ export abstract class BaseTimer {
         ...this.state,
         countdownActive: true,
         countdownValue: this.state.countdownDuration,
-        targetTime: targetTime ?? this.state.targetTime,
+        targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
         startTime: Date.now(),
       };
     } else {
       this.state = {
         ...this.state,
         startTime: Date.now(),
-        targetTime: targetTime ?? this.state.targetTime,
+        targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
         isRunning: true,
       };
     }
@@ -90,6 +90,10 @@ export abstract class BaseTimer {
       return;
     }
 
+    if (duration < 0) {
+      return;
+    }
+
     localStorage.setItem("countdownDuration", duration.toString());
 
     this.state = {
@@ -104,6 +108,10 @@ export abstract class BaseTimer {
       return;
     }
 
+    if (time < 0) {
+      return;
+    }
+
     this.state = {
       ...this.state,
       targetTime: time,
@@ -115,9 +123,11 @@ export abstract class BaseTimer {
       return;
     }
 
+    const now = Date.now();
+    const maxTime = Number.MAX_SAFE_INTEGER;
+
     if (this.state.countdownActive) {
-      const now = Date.now();
-      const elapsed = now - this.state.startTime;
+      const elapsed = Math.min(now - this.state.startTime, maxTime);
 
       this.state.countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
 
@@ -126,12 +136,12 @@ export abstract class BaseTimer {
           ...this.state,
           countdownActive: false,
           isRunning: true,
-          startTime: Date.now(),
+          startTime: now,
           elapsedTime: 0,
         };
       }
     } else if (this.state.isRunning) {
-      this.state.elapsedTime = Date.now() - this.state.startTime;
+      this.state.elapsedTime = Math.min(now - this.state.startTime, maxTime);
     }
   }
 }

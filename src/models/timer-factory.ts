@@ -5,8 +5,12 @@ import { BaseTimer } from "./base-timer";
 import { EmomTimer } from "./emom-timer";
 import { ForTimeTimer } from "./for-time-timer";
 
+const TIMER_MODE_KEY = "timerMode";
+
 export class TimerFactory {
   static createTimer(mode: TimerMode): BaseTimer {
+    localStorage.setItem(TIMER_MODE_KEY, mode);
+
     switch (mode) {
       case "forTime":
         return new ForTimeTimer();
@@ -17,5 +21,9 @@ export class TimerFactory {
       default:
         throw new Error(`Unknown timer mode: ${mode}`);
     }
+  }
+
+  static getLastMode(): TimerMode {
+    return (localStorage.getItem(TIMER_MODE_KEY) as TimerMode) || "forTime";
   }
 }

@@ -68,3 +68,19 @@ tasks:
       - rm -rf dist
       - rm -rf node_modules
       - pnpm store prune
+
+  test:
+    desc: Run tests once
+    cmds:
+      - pnpm test
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmds:
+      - pnpm test:watch
+
+  test:ci:
+    desc: Run tests in CI environment
+    cmds:
+      - task: ci
+      - pnpm test

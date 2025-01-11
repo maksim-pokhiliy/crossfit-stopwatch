@@ -293,4 +293,92 @@ describe("BaseTimer", () => {
       expect(state.elapsedTime).toBe(1000);
     });
   });
+
+  describe("getState", () => {
+    it("should return a copy of state", () => {
+      const timer = new TestTimer("forTime");
+      const state1 = timer.getState();
+      const state2 = timer.getState();
+
+      expect(state1).not.toBe(state2);
+      expect(state1).toEqual(state2);
+    });
+
+    it("should not allow state mutations to affect timer", () => {
+      const timer = new TestTimer("forTime");
+      const state = timer.getState();
+
+      state.elapsedTime = 5000;
+      state.isRunning = true;
+
+      const newState = timer.getState();
+
+      expect(newState.elapsedTime).toBe(0);
+      expect(newState.isRunning).toBe(false);
+    });
+  });
+
+  describe("edge cases", () => {
+    describe("setCountdownDuration", () => {
+      it("should not accept negative duration", () => {
+        const timer = new TestTimer("forTime");
+
+        timer.setCountdownDuration(-1000);
+
+        const state = timer.getState();
+
+        expect(state.countdownDuration).toBe(3000); // default value
+      });
+
+      it("should handle zero duration", () => {
+        const timer = new TestTimer("forTime");
+
+        timer.setCountdownDuration(0);
+
+        const state = timer.getState();
+
+        expect(state.countdownDuration).toBe(0);
+        expect(state.countdownValue).toBe(0);
+      });
+    });
+
+    describe("setTargetTime", () => {
+      it("should not accept negative target time", () => {
+        const timer = new TestTimer("forTime");
+
+        timer.setTargetTime(-1000);
+
+        const state = timer.getState();
+
+        expect(state.targetTime).toBe(0); // default value
+      });
+
+      it("should handle zero target time", () => {
+        const timer = new TestTimer("forTime");
+
+        timer.setTargetTime(0);
+
+        const state = timer.getState();
+
+        expect(state.targetTime).toBe(0);
+      });
+    });
+
+    describe("elapsed time", () => {
+      it("should handle large time values", () => {
+        const timer = new TestTimer("forTime");
+
+        timer.setCountdownDuration(0);
+        timer.start();
+
+        advanceTime(Number.MAX_SAFE_INTEGER);
+        timer.update();
+
+        const state = timer.getState();
+
+        expect(state.elapsedTime).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER);
+        expect(Number.isFinite(state.elapsedTime)).toBe(true);
+      });
+    });
+  });
 });
