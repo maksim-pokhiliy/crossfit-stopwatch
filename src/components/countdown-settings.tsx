@@ -7,6 +7,7 @@ import { useTimerContext } from "../hooks/use-timer-context";
 export const CountdownSettings: FC = memo(() => {
   const theme = useTheme<Theme>();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const { state, currentTimer, setState } = useTimerContext();
 
   const handleChange = useCallback(

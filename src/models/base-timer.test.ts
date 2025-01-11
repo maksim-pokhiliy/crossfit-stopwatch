@@ -118,6 +118,94 @@ describe("BaseTimer", () => {
       expect(state.countdownActive).toBe(false);
       expect(state.startTime).toBeNull();
     });
+
+    it("should preserve elapsed time when stopped", () => {
+      const timer = new TestTimer("forTime");
+
+      timer.setCountdownDuration(0);
+      timer.start();
+
+      advanceTime(5000);
+      timer.update();
+      timer.stop();
+
+      const stoppedState = timer.getState();
+
+      expect(stoppedState.elapsedTime).toBe(5000);
+
+      timer.start();
+
+      const startedState = timer.getState();
+
+      expect(startedState.elapsedTime).toBe(5000);
+
+      advanceTime(3000);
+      timer.update();
+
+      const finalState = timer.getState();
+
+      expect(finalState.elapsedTime).toBe(8000);
+    });
+
+    it("should preserve elapsed time when stopped after countdown", () => {
+      const timer = new TestTimer("forTime");
+
+      timer.setCountdownDuration(3000);
+      timer.start();
+
+      // Проходит обратный отсчет
+      advanceTime(3000);
+      timer.update();
+
+      // Таймер работает 5 секунд
+      advanceTime(5000);
+      timer.update();
+      timer.stop();
+
+      const stoppedState = timer.getState();
+
+      expect(stoppedState.elapsedTime).toBe(5000);
+
+      // Перезапускаем с обратным отсчетом
+      timer.start();
+
+      // Проходит обратный отсчет
+      advanceTime(3000);
+      timer.update();
+
+      // Таймер работает еще 3 секунды
+      advanceTime(3000);
+      timer.update();
+
+      const finalState = timer.getState();
+
+      expect(finalState.elapsedTime).toBe(8000);
+    });
+
+    it("should preserve countdown value when stopped during countdown", () => {
+      const timer = new TestTimer("forTime");
+
+      timer.setCountdownDuration(5000);
+      timer.start();
+
+      // Проходит 2 секунды обратного отсчета
+      advanceTime(2000);
+      timer.update();
+      timer.stop();
+
+      const stoppedState = timer.getState();
+
+      expect(stoppedState.countdownValue).toBe(3000);
+      expect(stoppedState.countdownActive).toBe(false);
+
+      // Перезапускаем
+      timer.start();
+
+      const startedState = timer.getState();
+
+      expect(startedState.countdownValue).toBe(5000); // Обратный отсчет начинается заново
+      expect(startedState.countdownActive).toBe(true);
+    });
   });
 
   describe("reset", () => {

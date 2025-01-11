@@ -12,14 +12,21 @@ export class TimerFactory {
     localStorage.setItem(TIMER_MODE_KEY, mode);
 
     switch (mode) {
-      case "forTime":
+      case "forTime": {
         return new ForTimeTimer();
-      case "amrap":
+      }
+
+      case "amrap": {
         return new AmrapTimer();
-      case "emom":
+      }
+
+      case "emom": {
         return new EmomTimer();
-      default:
+      }
+
+      default: {
         throw new Error(`Unknown timer mode: ${mode}`);
+      }
     }
   }
 

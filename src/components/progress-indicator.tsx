@@ -11,6 +11,8 @@ export const ProgressIndicator: FC = memo(() => {
     [state.elapsedTime, state.targetTime],
   );
 
+  const containerStyles = useMemo(() => ({ width: "100%", mt: 2 }), []);
+
   const progressBarStyles = useMemo(
     () => ({
       height: 8,
@@ -30,8 +32,6 @@ export const ProgressIndicator: FC = memo(() => {
     }),
     [progress],
   );
-
-  const containerStyles = useMemo(() => ({ width: "100%", mt: 2 }), []);
 
   if (state.currentMode === "forTime" || !state.targetTime || !state.isRunning) {
     return null;

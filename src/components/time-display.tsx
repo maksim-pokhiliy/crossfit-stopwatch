@@ -24,6 +24,7 @@ const formatTime = (ms: number): string => {
 export const TimeDisplay: FC = memo(() => {
   const theme = useTheme<Theme>();
   const { state } = useTimerContext();
+
   const time = state.countdownActive ? state.countdownValue : state.elapsedTime;
 
   const formattedTime = useMemo(() => formatTime(time), [time]);

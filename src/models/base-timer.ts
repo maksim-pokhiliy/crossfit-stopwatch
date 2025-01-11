@@ -45,18 +45,20 @@ export abstract class BaseTimer {
       return;
     }
 
+    const now = Date.now();
+
     if (this.state.countdownDuration > 0) {
       this.state = {
         ...this.state,
         countdownActive: true,
         countdownValue: this.state.countdownDuration,
         targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
-        startTime: Date.now(),
+        startTime: now,
       };
     } else {
       this.state = {
         ...this.state,
-        startTime: Date.now(),
+        startTime: now,
         targetTime: targetTime !== undefined ? Math.max(0, targetTime) : this.state.targetTime,
         isRunning: true,
       };
@@ -64,11 +66,19 @@ export abstract class BaseTimer {
   }
 
   stop(): void {
+    if (!this.state.startTime) {
+      return;
+    }
+
+    const now = Date.now();
+    const elapsed = Math.min(now - this.state.startTime, Number.MAX_SAFE_INTEGER);
+
     this.state = {
       ...this.state,
       isRunning: false,
       startTime: null,
       countdownActive: false,
+      elapsedTime: this.state.elapsedTime + elapsed,
     };
   }
 
@@ -128,20 +138,29 @@ export abstract class BaseTimer {
 
     if (this.state.countdownActive) {
       const elapsed = Math.min(now - this.state.startTime, maxTime);
+      const countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
 
-      this.state.countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
-
-      if (this.state.countdownValue === 0) {
+      if (countdownValue === 0) {
         this.state = {
           ...this.state,
           countdownActive: false,
           isRunning: true,
           startTime: now,
-          elapsedTime: 0,
+        };
+      } else {
+        this.state = {
+          ...this.state,
+          countdownValue,
         };
       }
     } else if (this.state.isRunning) {
-      this.state.elapsedTime = Math.min(now - this.state.startTime, maxTime);
+      const elapsed = Math.min(now - this.state.startTime, maxTime);
+
+      this.state = {
+        ...this.state,
+        elapsedTime: this.state.elapsedTime + elapsed,
+        startTime: now,
+      };
     }
   }
 }
