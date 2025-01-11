@@ -142,7 +142,7 @@ describe("TimerProvider", () => {
     expect(requestAnimationFrame).not.toHaveBeenCalled();
   });
 
-  it("should cleanup animation frame on unmount", () => {
+  it("should cleanup animation frame on unmount when animation was running", () => {
     (mockTimer.getState as Mock).mockReturnValue({
       isRunning: true,
       countdownActive: false,
@@ -160,5 +160,22 @@ describe("TimerProvider", () => {
     });
 
     expect(cancelAnimationFrame).toHaveBeenCalledWith(123);
+  });
+
+  it("should not cleanup animation frame on unmount when animation was not running", () => {
+    (mockTimer.getState as Mock).mockReturnValue({
+      isRunning: false,
+      countdownActive: false,
+      elapsedTime: 0,
+      countdownDuration: 0,
+    });
+
+    const { unmount } = render(<TimerProvider>{null}</TimerProvider>);
+
+    act(() => {
+      unmount();
+    });
+
+    expect(cancelAnimationFrame).not.toHaveBeenCalled();
   });
 });
