@@ -178,4 +178,42 @@ describe("TimerProvider", () => {
 
     expect(cancelAnimationFrame).not.toHaveBeenCalled();
   });
+
+  it("should update timer state during animation", () => {
+    // Подготавливаем моки для состояний таймера
+    const initialState = {
+      isRunning: true,
+      countdownActive: false,
+      elapsedTime: 0,
+      countdownDuration: 0,
+    };
+
+    const updatedState = {
+      ...initialState,
+      elapsedTime: 100,
+    };
+
+    (mockTimer.getState as Mock)
+      .mockReturnValueOnce(initialState) // Первый вызов при инициализации
+      .mockReturnValueOnce(initialState) // Второй вызов при старте анимации
+      .mockReturnValueOnce(updatedState); // Третий вызов после update
+
+    let animationCallback: FrameRequestCallback;
+
+    (window.requestAnimationFrame as Mock).mockImplementation((callback) => {
+      animationCallback = callback;
+
+      return 123;
+    });
+
+    render(<TimerProvider>{null}</TimerProvider>);
+
+    // Запускаем один кадр анимации
+    act(() => {
+      animationCallback(0);
+    });
+
+    expect(mockTimer.update).toHaveBeenCalled();
+    expect(mockTimer.getState).toHaveBeenCalled();
+  });
 });
