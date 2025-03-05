@@ -5,7 +5,6 @@ import { Button, ButtonGroup } from "@mui/material";
 import { FC, memo, useCallback } from "react";
 
 import { useTimer } from "../hooks/use-timer";
-import { soundService } from "../services/sound.service";
 
 export const ControlButtons: FC = memo(() => {
   const { state, startTimer, stopTimer, resetTimer } = useTimer();
@@ -15,9 +14,7 @@ export const ControlButtons: FC = memo(() => {
     state.isRunning ||
     state.countdownActive;
 
-  const handleStart = useCallback(async () => {
-    await soundService.initialize();
-
+  const handleStart = useCallback(() => {
     if (state.currentMode === "forTime") {
       startTimer();
     } else if (state.targetTime > 0) {
@@ -25,15 +22,8 @@ export const ControlButtons: FC = memo(() => {
     }
   }, [state.currentMode, state.targetTime, startTimer]);
 
-  const handleStop = useCallback(async () => {
-    await soundService.initialize();
-    stopTimer();
-  }, [stopTimer]);
-
-  const handleReset = useCallback(async () => {
-    await soundService.initialize();
-    resetTimer();
-  }, [resetTimer]);
+  const handleStop = useCallback(stopTimer, [stopTimer]);
+  const handleReset = useCallback(resetTimer, [resetTimer]);
 
   return (
     <ButtonGroup

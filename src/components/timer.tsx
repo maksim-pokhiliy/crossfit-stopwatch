@@ -15,20 +15,6 @@ export const Timer: FC = memo(() => {
         backgroundColor: "background.default",
         minHeight: "100vh",
         position: "relative",
-        "::before": {
-          content: '""',
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100%",
-          backgroundImage: "url('noise.png')",
-          backgroundSize: "109px",
-          backgroundRepeat: "repeat",
-          opacity: 0.06,
-          pointerEvents: "none",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-        },
       }}
     >
       <Container

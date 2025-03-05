@@ -40,11 +40,11 @@ export abstract class BaseTimer {
     return { ...this.state };
   }
 
-  start(targetTime?: number): void {
-    if (this.state.isRunning || this.state.countdownActive) {
-      return;
-    }
+  canStart(): boolean {
+    return !this.state.isRunning && !this.state.countdownActive;
+  }
 
+  start(targetTime?: number): void {
     const now = Date.now();
 
     if (this.state.countdownDuration > 0) {
@@ -117,7 +117,6 @@ export abstract class BaseTimer {
     if (this.state.isRunning || this.state.countdownActive) {
       return;
     }
-
     if (time < 0) {
       return;
     }

@@ -16,22 +16,13 @@ export const useTimer = () => {
 
   const handleStartTimer = useCallback(
     (targetTime?: number) => {
-      if (state.isRunning || state.countdownActive) {
-        return;
-      }
-
       startTimer(targetTime);
     },
-    [state.isRunning, state.countdownActive, startTimer],
+    [startTimer],
   );
 
-  const handleStopTimer = useCallback(() => {
-    stopTimer();
-  }, [stopTimer]);
-
-  const handleResetTimer = useCallback(() => {
-    resetTimer();
-  }, [resetTimer]);
+  const handleStopTimer = useCallback(stopTimer, [stopTimer]);
+  const handleResetTimer = useCallback(resetTimer, [resetTimer]);
 
   return {
     state,

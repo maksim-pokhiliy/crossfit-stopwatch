@@ -1,75 +1,49 @@
-import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, PropsWithChildren, useMemo, useState } from "react";
 
-import { BaseTimer, TimerState } from "../models/base-timer";
-import { TimerFactory } from "../models/timer-factory";
+import { useTimerAnimation } from "../hooks/use-timer-animation";
+import { TimerState } from "../models/base-timer";
+import { TimerService } from "../services/timer.service";
 import { TimerMode } from "../types/timer";
 
 import { TimerContext } from "./timer-context";
 
 export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [currentTimer, setCurrentTimer] = useState<BaseTimer>(() =>
-    TimerFactory.createTimer(TimerFactory.getLastMode()),
-  );
+  const [timerService] = useState(() => new TimerService("forTime"));
+  const [state, setState] = useState<TimerState>(timerService.getState());
 
-  const [state, setState] = useState<TimerState>(() => currentTimer.getState());
+  useTimerAnimation(timerService, setState);
 
-  const animationFrameRef = useRef<number>(0);
+  const setMode = (mode: TimerMode) => {
+    timerService.setMode(mode);
+    setState(timerService.getState());
+  };
 
-  const setMode = useCallback((mode: TimerMode) => {
-    const newTimer = TimerFactory.createTimer(mode);
+  const startTimer = (targetTime?: number) => {
+    timerService.start(targetTime);
+    setState(timerService.getState());
+  };
 
-    setCurrentTimer(newTimer);
-    setState(newTimer.getState());
-  }, []);
+  const stopTimer = () => {
+    timerService.stop();
+    setState(timerService.getState());
+  };
 
-  const startTimer = useCallback(
-    (targetTime?: number) => {
-      currentTimer.start(targetTime);
-      setState(currentTimer.getState());
-    },
-    [currentTimer],
-  );
-
-  const stopTimer = useCallback(() => {
-    currentTimer.stop();
-    setState(currentTimer.getState());
-  }, [currentTimer]);
-
-  const resetTimer = useCallback(() => {
-    currentTimer.reset();
-    setState(currentTimer.getState());
-  }, [currentTimer]);
-
-  const animate = useCallback(() => {
-    currentTimer.update();
-    setState(currentTimer.getState());
-
-    animationFrameRef.current = requestAnimationFrame(animate);
-  }, [currentTimer]);
-
-  useEffect(() => {
-    if (state.isRunning || state.countdownActive) {
-      animationFrameRef.current = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [state.isRunning, state.countdownActive, animate]);
+  const resetTimer = () => {
+    timerService.reset();
+    setState(timerService.getState());
+  };
 
   const contextValue = useMemo(
     () => ({
       state,
-      currentTimer,
+      currentTimer: timerService.getTimer(),
       setMode,
       startTimer,
       stopTimer,
       resetTimer,
       setState,
     }),
-    [state, currentTimer, setMode, startTimer, stopTimer, resetTimer],
+    [state, timerService, setMode, startTimer, stopTimer, resetTimer],
   );
 
   return <TimerContext.Provider value={contextValue}>{children}</TimerContext.Provider>;
