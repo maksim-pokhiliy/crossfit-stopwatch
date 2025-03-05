@@ -1,5 +1,6 @@
 import { Box, Theme, Typography, useTheme } from "@mui/material";
 import { FC, memo, useMemo } from "react";
+
 import { useTimerContext } from "../hooks/use-timer-context";
 import { formatTimeShort } from "../utils/time";
 
@@ -14,6 +15,7 @@ export const TimeDisplay: FC = memo(() => {
     if (state.countdownActive) {
       return theme.palette.warning.main;
     }
+
     return theme.palette.text.primary;
   }, [state.countdownActive, theme.palette]);
 

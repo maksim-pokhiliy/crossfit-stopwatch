@@ -1,5 +1,6 @@
 import { Box, Fade, Theme, Typography, useMediaQuery } from "@mui/material";
 import { FC, memo } from "react";
+
 import { useTimerContext } from "../hooks/use-timer-context";
 import { formatTimeLong } from "../utils/time";
 

@@ -1,11 +1,13 @@
 import { TIME, TIMER_CONSTANTS } from "../constants/timer";
 import { TimerState } from "../models/base-timer";
+
 import { audioService } from "./audio.service";
 
 export class SoundManager {
   playCountdown(state: TimerState) {
     if (state.countdownActive) {
       const seconds = Math.floor(state.countdownValue / TIME.MILLISECONDS_IN_SECOND);
+
       audioService.playCountdown(seconds);
     }
   }
@@ -19,6 +21,7 @@ export class SoundManager {
   playEmom(state: TimerState) {
     if (state.currentMode === "emom" && state.isRunning) {
       const timeInMinute = state.elapsedTime % TIME.MILLISECONDS_IN_MINUTE;
+
       audioService.playEmom(timeInMinute);
     }
   }

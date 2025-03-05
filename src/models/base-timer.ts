@@ -117,6 +117,7 @@ export abstract class BaseTimer {
     if (this.state.isRunning || this.state.countdownActive) {
       return;
     }
+
     if (time < 0) {
       return;
     }
