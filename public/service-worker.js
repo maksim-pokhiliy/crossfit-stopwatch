@@ -7,10 +7,6 @@ const ASSETS_TO_CACHE = [
   "/favicon.ico",
   "/logo192.png",
   "/logo512.png",
-  "/static/js/main.js",
-  "/static/css/main.css",
-  "/sounds/short-beep.mp3",
-  "/sounds/long-beep.mp3",
 ];
 
 self.addEventListener("install", (event) => {
