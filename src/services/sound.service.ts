@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 class SoundService {
   private audioContext: AudioContext | null = null;
   private lastPlayTime = 0;
@@ -79,25 +80,28 @@ class SoundService {
     }
   }
 
-  async playCountdownSound(secondsLeft: number): Promise<void> {
-    const seconds = Math.floor(secondsLeft);
+  playForState(state: any): void {
+    if (state.countdownActive) {
+      const seconds = Math.floor(state.countdownValue / 1000);
 
-    if (seconds === 2 || seconds === 1 || seconds === 0) {
-      await this.playSound("shortBeep");
+      if (seconds <= 3 && seconds >= 1) {
+        this.playSound("shortBeep");
+      }
     }
-  }
 
-  async playStartSound(): Promise<void> {
-    await this.playSound("longBeep");
-  }
+    if (state.isRunning && state.elapsedTime < 100) {
+      this.playSound("longBeep");
+    }
 
-  async playEmomSound(timeInMinute: number): Promise<void> {
-    const seconds = Math.floor(timeInMinute / 1000);
+    if (state.currentMode === "emom" && state.isRunning) {
+      const timeInMinute = state.elapsedTime % 60000;
+      const seconds = Math.floor(timeInMinute / 1000);
 
-    if (seconds >= 57 && seconds <= 59) {
-      await this.playSound("shortBeep");
-    } else if (timeInMinute < 1000) {
-      await this.playSound("longBeep");
+      if (seconds >= 57 && seconds <= 59) {
+        this.playSound("shortBeep");
+      } else if (timeInMinute < 1000) {
+        this.playSound("longBeep");
+      }
     }
   }
 }

@@ -1,15 +1,14 @@
 import { BaseTimer } from "../models/base-timer";
-import { TimerFactory } from "../models/timer-factory";
+import { createTimer } from "../models/timer-factory";
 import { TimerMode } from "../types/timer";
 
-import { audioService } from "./audio.service";
-import { soundManager } from "./sound-manager";
+import { soundService } from "./sound.service";
 
 export class TimerService {
   private timer: BaseTimer;
 
   constructor(mode: TimerMode) {
-    this.timer = TimerFactory.createTimer(mode);
+    this.timer = createTimer(mode);
   }
 
   getTimer(): BaseTimer {
@@ -21,7 +20,7 @@ export class TimerService {
   }
 
   setMode(mode: TimerMode) {
-    this.timer = TimerFactory.createTimer(mode);
+    this.timer = createTimer(mode);
   }
 
   start(targetTime?: number) {
@@ -30,11 +29,16 @@ export class TimerService {
     }
 
     this.timer.start(targetTime);
-    audioService.initialize();
 
-    if (!this.timer.getState().countdownActive) {
-      soundManager.update(this.timer.getState());
-    }
+    soundService.initialize();
+  }
+
+  pause() {
+    this.timer.pause();
+  }
+
+  resume() {
+    this.timer.resume();
   }
 
   stop() {
@@ -55,6 +59,6 @@ export class TimerService {
 
   update() {
     this.timer.update();
-    soundManager.update(this.timer.getState());
+    soundService.playForState(this.timer.getState());
   }
 }

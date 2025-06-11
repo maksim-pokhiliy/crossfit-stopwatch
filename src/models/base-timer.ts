@@ -4,6 +4,7 @@ export interface TimerState {
   startTime: number | null;
   elapsedTime: number;
   isRunning: boolean;
+  isPaused: boolean;
   currentMode: string;
   targetTime: number;
   currentRound: number;
@@ -24,6 +25,7 @@ export abstract class BaseTimer {
       startTime: null,
       elapsedTime: 0,
       isRunning: false,
+      isPaused: false,
       currentMode: mode,
       targetTime: 0,
       currentRound: 1,
@@ -65,20 +67,42 @@ export abstract class BaseTimer {
     }
   }
 
+  pause(): void {
+    if (!this.state.isRunning || this.state.countdownActive) {
+      return;
+    }
+
+    this.state = {
+      ...this.state,
+      isRunning: false,
+      isPaused: true,
+      startTime: null,
+    };
+  }
+
+  resume(): void {
+    if (!this.state.isPaused) {
+      return;
+    }
+
+    this.state = {
+      ...this.state,
+      isRunning: true,
+      isPaused: false,
+      startTime: Date.now(),
+    };
+  }
+
   stop(): void {
     if (!this.state.startTime) {
       return;
     }
-
-    const now = Date.now();
-    const elapsed = Math.min(now - this.state.startTime, Number.MAX_SAFE_INTEGER);
 
     this.state = {
       ...this.state,
       isRunning: false,
       startTime: null,
       countdownActive: false,
-      elapsedTime: this.state.elapsedTime + elapsed,
     };
   }
 
@@ -88,6 +112,7 @@ export abstract class BaseTimer {
       startTime: null,
       elapsedTime: 0,
       isRunning: false,
+      isPaused: false,
       currentRound: 1,
       countdownActive: false,
       countdownValue: this.state.countdownDuration,
@@ -134,10 +159,9 @@ export abstract class BaseTimer {
     }
 
     const now = Date.now();
-    const maxTime = Number.MAX_SAFE_INTEGER;
 
     if (this.state.countdownActive) {
-      const elapsed = Math.min(now - this.state.startTime, maxTime);
+      const elapsed = now - this.state.startTime;
       const countdownValue = Math.max(0, this.state.countdownDuration - elapsed);
 
       if (countdownValue === 0) {
@@ -146,6 +170,7 @@ export abstract class BaseTimer {
           countdownActive: false,
           isRunning: true,
           startTime: now,
+          elapsedTime: 0,
         };
       } else {
         this.state = {
@@ -154,11 +179,11 @@ export abstract class BaseTimer {
         };
       }
     } else if (this.state.isRunning) {
-      const elapsed = Math.min(now - this.state.startTime, maxTime);
+      const sessionElapsed = now - this.state.startTime;
 
       this.state = {
         ...this.state,
-        elapsedTime: this.state.elapsedTime + elapsed,
+        elapsedTime: this.state.elapsedTime + sessionElapsed,
         startTime: now,
       };
     }

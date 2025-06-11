@@ -6,25 +6,20 @@ import { TimerService } from "../services/timer.service";
 export const useTimerAnimation = (
   timerService: TimerService,
   setState: (state: TimerState) => void,
+  state: TimerState,
 ) => {
-  const animate = () => {
-    timerService.update();
-    setState(timerService.getState());
-    requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
-    let frameId: number;
-    const currentState = timerService.getState();
-
-    if (currentState.isRunning || currentState.countdownActive) {
-      frameId = requestAnimationFrame(animate);
+    if (!state.isRunning && !state.countdownActive) {
+      return;
     }
 
+    const interval = setInterval(() => {
+      timerService.update();
+      setState(timerService.getState());
+    }, 10);
+
     return () => {
-      if (frameId) {
-        cancelAnimationFrame(frameId);
-      }
+      clearInterval(interval);
     };
-  }, [timerService, animate]);
+  }, [state.isRunning, state.countdownActive, timerService, setState]);
 };

@@ -7,30 +7,21 @@ import { ForTimeTimer } from "./for-time-timer";
 
 const TIMER_MODE_KEY = "timerMode";
 
-export class TimerFactory {
-  static createTimer(mode: TimerMode): BaseTimer {
-    localStorage.setItem(TIMER_MODE_KEY, mode);
+export const createTimer = (mode: TimerMode): BaseTimer => {
+  localStorage.setItem(TIMER_MODE_KEY, mode);
 
-    switch (mode) {
-      case "forTime": {
-        return new ForTimeTimer();
-      }
-
-      case "amrap": {
-        return new AmrapTimer();
-      }
-
-      case "emom": {
-        return new EmomTimer();
-      }
-
-      default: {
-        throw new Error(`Unknown timer mode: ${mode}`);
-      }
-    }
+  switch (mode) {
+    case "forTime":
+      return new ForTimeTimer();
+    case "amrap":
+      return new AmrapTimer();
+    case "emom":
+      return new EmomTimer();
+    default:
+      throw new Error(`Unknown timer mode: ${mode}`);
   }
+};
 
-  static getLastMode(): TimerMode {
-    return (localStorage.getItem(TIMER_MODE_KEY) as TimerMode) || "forTime";
-  }
-}
+export const getLastMode = (): TimerMode => {
+  return (localStorage.getItem(TIMER_MODE_KEY) as TimerMode) || "forTime";
+};

@@ -18,7 +18,7 @@ export const Timer: FC = memo(() => {
       }}
     >
       <Container
-        maxWidth='xs'
+        maxWidth="xs"
         sx={{
           height: "100vh",
           display: "flex",

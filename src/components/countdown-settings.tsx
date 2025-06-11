@@ -32,7 +32,7 @@ export const CountdownSettings: FC = memo(() => {
         min={TIMER_CONSTANTS.MIN_COUNTDOWN}
         step={1000}
         value={state.countdownDuration}
-        valueLabelDisplay='auto'
+        valueLabelDisplay="auto"
         valueLabelFormat={(value) => `${value / 1000}s`}
         marks={[
           { value: 0, label: "0s" },

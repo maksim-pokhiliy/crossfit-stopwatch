@@ -1,31 +1,21 @@
-const js = require("@eslint/js");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
-const tsParser = require("@typescript-eslint/parser");
-const prettierConfig = require("eslint-config-prettier");
-const importPlugin = require("eslint-plugin-import");
-const jsxA11yPlugin = require("eslint-plugin-jsx-a11y");
-const noRelativeImportPathsPlugin = require("eslint-plugin-no-relative-import-paths");
-const prettierPlugin = require("eslint-plugin-prettier");
-const reactPlugin = require("eslint-plugin-react");
-const reactHooksPlugin = require("eslint-plugin-react-hooks");
-const reactRefreshPlugin = require("eslint-plugin-react-refresh");
-const globals = require("globals");
+import js from "@eslint/js";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import prettierConfig from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
+import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
+import noRelativeImportPathsPlugin from "eslint-plugin-no-relative-import-paths";
+import prettierPlugin from "eslint-plugin-prettier";
+import reactPlugin from "eslint-plugin-react";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
+import globals from "globals";
 
 const config = [
   {
-    ignores: ["node_modules/**", "dist/**", ".eslint-cache"],
+    ignores: ["node_modules/**", "dist/**", "commitlint.config.cjs", "docusaurus/"],
   },
   {
-    files: ["*.cjs", ".*.cjs"],
-    languageOptions: {
-      sourceType: "commonjs",
-      globals: {
-        module: true,
-      },
-    },
-  },
-  {
-    files: ["**/*.{js,jsx,ts,tsx,mjs}"],
+    files: ["**/*.{js,jsx,ts,tsx,cjs,mjs}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -34,37 +24,38 @@ const config = [
         ...globals.es2021,
         React: "readonly",
         JSX: "readonly",
+        process: "readonly",
       },
-      parser: tsParser,
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
-        project: true,
-        projectService: true,
-        allowDefaultProject: true,
       },
     },
     settings: {
       react: {
         version: "detect",
       },
+      formComponents: ["Form"],
+      linkComponents: [
+        { name: "Link", linkAttribute: "to" },
+        { name: "NavLink", linkAttribute: "to" },
+      ],
       "import/resolver": {
         typescript: {},
         node: {
           extensions: [".ts", ".tsx"],
         },
       },
+      "import/internal-regex": "^@app/",
     },
     plugins: {
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
-      "react-refresh": reactRefreshPlugin,
       "jsx-a11y": jsxA11yPlugin,
       import: importPlugin,
       "no-relative-import-paths": noRelativeImportPathsPlugin,
       prettier: prettierPlugin,
-      "@typescript-eslint": tsPlugin,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -73,16 +64,14 @@ const config = [
       ...reactHooksPlugin.configs.recommended.rules,
       ...jsxA11yPlugin.configs.recommended.rules,
       ...prettierConfig.rules,
-      ...tsPlugin.configs.recommended.rules,
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "react/jsx-curly-brace-presence": ["warn", { props: "never", children: "never" }],
-      "no-console": ["warn", { allow: ["error"] }],
+      "no-console": "error",
       "react/display-name": ["error", { ignoreTranspilerName: false, checkContextObjects: true }],
       "import/no-named-as-default": "off",
       "import/no-named-as-default-member": "off",
       "import/no-anonymous-default-export": "warn",
       "lines-between-class-members": ["error", "always", { exceptAfterSingleLine: true }],
-      "max-lines": ["warn", { max: 750, skipComments: true, skipBlankLines: true }],
+      "max-lines": ["warn", { max: 800, skipComments: true, skipBlankLines: true }],
       "padding-line-between-statements": [
         "error",
         { blankLine: "always", prev: "*", next: ["return"] },
@@ -123,7 +112,6 @@ const config = [
         {
           allowSameFolder: true,
           rootDir: "src",
-          prefix: "@app",
           allowedDepth: 1,
         },
       ],
@@ -149,11 +137,32 @@ const config = [
         },
       ],
       curly: ["error", "all"],
+    },
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },
+  {
+    files: ["src/shared/utils/logger.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
 ];
 
-module.exports = config;
+export default config;

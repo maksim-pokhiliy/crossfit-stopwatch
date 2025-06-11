@@ -23,9 +23,9 @@ export const ModeButtons: FC = memo(() => {
   return (
     <ButtonGroup
       disableElevation
-      color='primary'
-      orientation='horizontal'
-      variant='contained'
+      color="primary"
+      orientation="horizontal"
+      variant="contained"
       sx={{
         width: "100%",
         "& .MuiButton-root": {
@@ -38,11 +38,11 @@ export const ModeButtons: FC = memo(() => {
       }}
     >
       {(Object.keys(modeDescriptions) as TimerMode[]).map((mode) => (
-        <Tooltip key={mode} arrow placement='top' title={modeDescriptions[mode]}>
+        <Tooltip key={mode} arrow placement="top" title={modeDescriptions[mode]}>
           <Button
             color={state.currentMode === mode ? "primary" : "inherit"}
             disabled={state.isRunning || state.countdownActive}
-            variant='contained'
+            variant="contained"
             onClick={() => handleModeChange(mode)}
           >
             {mode.toUpperCase()}

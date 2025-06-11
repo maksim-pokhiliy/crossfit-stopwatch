@@ -41,10 +41,10 @@ export const TimeInput: FC = memo(() => {
       <TextField
         fullWidth
         disabled={state.isRunning || state.countdownActive}
-        label='Duration (minutes)'
-        placeholder='Enter duration in minutes'
-        size='small'
-        type='number'
+        label="Duration (minutes)"
+        placeholder="Enter duration in minutes"
+        size="small"
+        type="number"
         value={state.targetTime ? state.targetTime / TIME.MILLISECONDS_IN_MINUTE : ""}
         slotProps={{
           htmlInput: {
@@ -72,10 +72,10 @@ export const TimeInput: FC = memo(() => {
       />
 
       <Stack
-        aria-label='Quick duration presets'
-        direction='row'
-        justifyContent='center'
-        role='group'
+        aria-label="Quick duration presets"
+        direction="row"
+        justifyContent="center"
+        role="group"
         sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}
       >
         {[5, 10, 15, 20].map((time) => (

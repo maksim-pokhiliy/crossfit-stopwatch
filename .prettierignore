@@ -1,7 +1,0 @@
-.eslintrc*
-node_modules
-build
-dist
-out
-coverage
-.pnpm-store

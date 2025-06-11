@@ -39,7 +39,7 @@ export const ProgressIndicator: FC = memo(() => {
 
   return (
     <Box sx={containerStyles}>
-      <LinearProgress sx={progressBarStyles} value={progress} variant='determinate' />
+      <LinearProgress sx={progressBarStyles} value={progress} variant="determinate" />
     </Box>
   );
 });

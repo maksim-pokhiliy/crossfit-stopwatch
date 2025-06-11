@@ -2,27 +2,23 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "allowJs": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext", "ES2018"],
+    "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "paths": {
-      "@app/*": ["src/*"]
+      "@app/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2020",
-
-    "useDefineForClassFields": true
+    "target": "ES2018",
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*", "public/**/*"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": ["node_modules", "dist", "build", "docusaurus"],
+  "include": ["vite.config.ts", "**/*.ts", "**/*.tsx"]
 }

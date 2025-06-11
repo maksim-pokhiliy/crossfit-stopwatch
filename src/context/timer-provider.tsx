@@ -11,7 +11,7 @@ export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
   const [timerService] = useState(() => new TimerService("forTime"));
   const [state, setState] = useState<TimerState>(timerService.getState());
 
-  useTimerAnimation(timerService, setState);
+  useTimerAnimation(timerService, setState, state);
 
   const setMode = (mode: TimerMode) => {
     timerService.setMode(mode);
@@ -20,6 +20,19 @@ export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const startTimer = (targetTime?: number) => {
     timerService.start(targetTime);
+
+    const newState = timerService.getState();
+
+    setState(newState);
+  };
+
+  const pauseTimer = () => {
+    timerService.pause();
+    setState(timerService.getState());
+  };
+
+  const resumeTimer = () => {
+    timerService.resume();
     setState(timerService.getState());
   };
 
@@ -39,11 +52,13 @@ export const TimerProvider: FC<PropsWithChildren> = ({ children }) => {
       currentTimer: timerService.getTimer(),
       setMode,
       startTimer,
+      pauseTimer,
+      resumeTimer,
       stopTimer,
       resetTimer,
       setState,
     }),
-    [state, timerService, setMode, startTimer, stopTimer, resetTimer],
+    [state, timerService, setMode, startTimer, pauseTimer, resumeTimer, stopTimer, resetTimer],
   );
 
   return <TimerContext.Provider value={contextValue}>{children}</TimerContext.Provider>;

@@ -1,13 +1,14 @@
+import Pause from "@mui/icons-material/Pause";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Refresh from "@mui/icons-material/Refresh";
 import Stop from "@mui/icons-material/Stop";
 import { Button, ButtonGroup } from "@mui/material";
 import { FC, memo, useCallback } from "react";
 
-import { useTimer } from "../hooks/use-timer";
+import { useTimerContext } from "../hooks/use-timer-context";
 
 export const ControlButtons: FC = memo(() => {
-  const { state, startTimer, stopTimer, resetTimer } = useTimer();
+  const { state, startTimer, pauseTimer, resumeTimer, stopTimer, resetTimer } = useTimerContext();
 
   const isStartDisabled =
     (state.currentMode !== "forTime" && !state.targetTime) ||
@@ -15,23 +16,26 @@ export const ControlButtons: FC = memo(() => {
     state.countdownActive;
 
   const handleStart = useCallback(() => {
-    if (state.currentMode === "forTime") {
+    if (state.isPaused) {
+      resumeTimer();
+    } else if (state.currentMode === "forTime") {
       startTimer();
     } else if (state.targetTime > 0) {
       startTimer(state.targetTime);
     }
-  }, [state.currentMode, state.targetTime, startTimer]);
+  }, [state.currentMode, state.targetTime, state.isPaused, startTimer, resumeTimer]);
 
+  const handlePause = useCallback(pauseTimer, [pauseTimer]);
   const handleStop = useCallback(stopTimer, [stopTimer]);
   const handleReset = useCallback(resetTimer, [resetTimer]);
 
   return (
     <ButtonGroup
       disableElevation
-      aria-label='Timer controls'
-      orientation='horizontal'
-      role='group'
-      variant='contained'
+      aria-label="Timer controls"
+      orientation="horizontal"
+      role="group"
+      variant="contained"
       sx={{
         width: "100%",
         "& .MuiButton-root": {
@@ -44,19 +48,30 @@ export const ControlButtons: FC = memo(() => {
       }}
     >
       <Button
-        aria-label={`Start ${state.currentMode} timer`}
-        color='success'
+        aria-label={state.isPaused ? "Resume timer" : `Start ${state.currentMode} timer`}
+        color="success"
         disabled={isStartDisabled}
         startIcon={<PlayArrow />}
         onClick={handleStart}
       >
-        Start
+        {state.isPaused ? "Resume" : "Start"}
       </Button>
 
+      {state.isRunning && (
+        <Button
+          aria-label="Pause timer"
+          color="warning"
+          startIcon={<Pause />}
+          onClick={handlePause}
+        >
+          Pause
+        </Button>
+      )}
+
       <Button
-        aria-label='Stop timer'
-        color='error'
-        disabled={!state.isRunning}
+        aria-label="Stop timer"
+        color="error"
+        disabled={!state.isRunning && !state.isPaused}
         startIcon={<Stop />}
         onClick={handleStop}
       >
@@ -64,8 +79,8 @@ export const ControlButtons: FC = memo(() => {
       </Button>
 
       <Button
-        aria-label='Reset timer'
-        color='warning'
+        aria-label="Reset timer"
+        color="info"
         disabled={state.countdownActive}
         startIcon={<Refresh />}
         onClick={handleReset}

@@ -24,6 +24,21 @@ tasks:
       - pnpm build
       - pnpm preview
 
+  test:
+    desc: Run tests
+    cmds:
+      - pnpm test:run
+
+  test-watch:
+    desc: Run tests in watch mode
+    cmds:
+      - pnpm test
+
+  test-ui:
+    desc: Run tests with UI
+    cmds:
+      - pnpm test:ui
+
   vercel-deploy:
     desc: Deploy app to the Vercel
     prompt: Are you sure you want to deploy project to the Vercel environment?
@@ -33,6 +48,7 @@ tasks:
       - pnpm format
       - pnpm json-lint
       - pnpm tscheck
+      - pnpm test:run
       - vercel --prod
       - git status
 

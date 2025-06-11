@@ -8,6 +8,8 @@ export interface TimerContextType {
   currentTimer: BaseTimer;
   setMode: (mode: TimerMode) => void;
   startTimer: (targetTime?: number) => void;
+  pauseTimer: () => void;
+  resumeTimer: () => void;
   stopTimer: () => void;
   resetTimer: () => void;
   setState: (state: TimerState) => void;

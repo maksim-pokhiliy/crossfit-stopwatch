@@ -23,13 +23,13 @@ export const TimeDisplay: FC = memo(() => {
   const timeStyles = useMemo(() => ({ fontWeight: "bold", color: textColor }), [textColor]);
 
   return (
-    <Box aria-live='polite' role='timer' sx={containerStyles}>
+    <Box aria-live="polite" role="timer" sx={containerStyles}>
       {state.currentMode === "emom" && state.isRunning && (
         <Typography
           gutterBottom
           aria-label={`Round ${state.currentRound}`}
-          color='text.secondary'
-          variant='h6'
+          color="text.secondary"
+          variant="h6"
         >
           Round {state.currentRound}
         </Typography>
@@ -37,15 +37,15 @@ export const TimeDisplay: FC = memo(() => {
 
       <Typography
         aria-label={`${state.countdownActive ? "Countdown" : state.currentMode} timer: ${formattedTime}`}
-        component='div'
+        component="div"
         sx={timeStyles}
-        variant='h2'
+        variant="h2"
       >
         {formattedTime}
       </Typography>
 
       {state.countdownActive && state.countdownDuration > 0 && (
-        <Typography aria-label='Get ready for workout' color='text.secondary' variant='subtitle1'>
+        <Typography aria-label="Get ready for workout" color="text.secondary" variant="subtitle1">
           Get ready!
         </Typography>
       )}
